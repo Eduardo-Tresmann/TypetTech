@@ -1,4 +1,4 @@
-al# Lista de Tarefas para Criar Site de Digitação como MonkeyType
+a l# Lista de Tarefas para Criar Site de Digitação como MonkeyType
 
 ## Etapas a Serem Completadas
 
@@ -17,4 +17,7 @@ al# Lista de Tarefas para Criar Site de Digitação como MonkeyType
 
 - [x] Adicionar tema escuro igual ao MonkeyType.com
 - [x] Adicionar palavras de digitação em português do Brasil
+- [x] Alterar temporizador para 30 segundos
+- [x] Tornar o design mais parecido com MonkeyType.com (layout, cores, cursor piscando, etc.)
+- [x] Aumentar o tamanho das letras e fazer letras corretas ficarem brancas
 - [ ] Adicionar recursos adicionais se desejado (modos de teste diferentes, persistência de estatísticas).

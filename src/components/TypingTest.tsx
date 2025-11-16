@@ -317,13 +317,13 @@ export default function TypingTest() {
             {wpm} WPM
           </div>
           <div className="text-2xl mb-4">
-            precisão: {accuracy}%
+            Precisão: {accuracy}%
           </div>
           <div className="text-2xl mb-4">
-            letras corretas: {correctLetters}
+            Acertos: {correctLetters}
           </div>
           <div className="text-2xl mb-8">
-            letras erradas: {incorrectLetters}
+            Erros: {incorrectLetters}
           </div>
           <ResetButton
             text="Reiniciar"

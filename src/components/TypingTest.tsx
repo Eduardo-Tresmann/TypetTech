@@ -35,6 +35,7 @@ export default function TypingTest() {
   const [accuracy, setAccuracy] = useState<number>(100);
   const [isFinished, setIsFinished] = useState<boolean>(false);
   const [cursorVisible, setCursorVisible] = useState<boolean>(true);
+  const [isWindowFocused, setIsWindowFocused] = useState<boolean>(true);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -43,7 +44,7 @@ export default function TypingTest() {
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
-    if (isActive && timeLeft > 0) {
+    if (isActive && timeLeft > 0 && isWindowFocused) {
       interval = setInterval(() => {
         setTimeLeft((prev) => prev - 1);
       }, 1000);
@@ -53,14 +54,31 @@ export default function TypingTest() {
       calculateFinalStats();
     }
     return () => clearInterval(interval);
-  }, [isActive, timeLeft]);
+  }, [isActive, timeLeft, isWindowFocused]);
 
   useEffect(() => {
-    const cursorInterval = setInterval(() => {
-      setCursorVisible((prev) => !prev);
-    }, 530);
-    return () => clearInterval(cursorInterval);
+    const handleFocus = () => setIsWindowFocused(true);
+    const handleBlur = () => setIsWindowFocused(false);
+
+    window.addEventListener('focus', handleFocus);
+    window.addEventListener('blur', handleBlur);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('blur', handleBlur);
+    };
   }, []);
+
+  useEffect(() => {
+    if (!isWindowFocused) {
+      const cursorInterval = setInterval(() => {
+        setCursorVisible((prev) => !prev);
+      }, 530);
+      return () => clearInterval(cursorInterval);
+    } else {
+      setCursorVisible(true);
+    }
+  }, [isWindowFocused]);
 
   useEffect(() => {
     if (isActive && startTime) {
@@ -76,7 +94,7 @@ export default function TypingTest() {
   }, [userInput, isActive, startTime, text]);
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (isFinished) return;
+    if (isFinished || !isWindowFocused) return;
 
     if (!isActive && e.key.length === 1) {
       setIsActive(true);
@@ -90,7 +108,7 @@ export default function TypingTest() {
       setUserInput((prev) => prev + e.key);
       setCurrentIndex((prev) => prev + 1);
     }
-  }, [isActive, isFinished]);
+  }, [isActive, isFinished, isWindowFocused]);
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown);
@@ -127,7 +145,7 @@ export default function TypingTest() {
       if (index < userInput.length) {
         className = userInput[index] === char ? 'text-white' : 'text-[#ca4754] bg-[#ca47541a]';
       } else if (index === currentIndex && cursorVisible) {
-        className = 'bg-[#e2b714] text-[#323437]';
+        className = 'text-[#646669] border-l-2 border-[#e2b714]';
       }
       return (
         <span key={index} className={className}>
@@ -156,8 +174,17 @@ export default function TypingTest() {
           </div>
         </div>
 
-        <div className="text-4xl leading-relaxed font-mono mb-8 text-center">
-          {renderText()}
+        <div className="text-4xl leading-relaxed font-mono mb-8 text-center relative">
+          <div className={`${!isWindowFocused ? 'blur-sm' : ''}`}>
+            {renderText()}
+          </div>
+          {!isWindowFocused && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="text-white text-xl font-semibold px-6 py-3">
+                Pressione qualquer tecla para continuar!
+              </div>
+            </div>
+          )}
         </div>
 
         {isFinished && (

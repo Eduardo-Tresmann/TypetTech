@@ -265,24 +265,39 @@ export default function TypingTest() {
   return (
     <div
       ref={containerRef}
-      className="min-h-screen bg-[#323437] flex flex-col items-center justify-center py-4 px-1 focus:outline-none"
+      className="min-h-screen bg-[#323437] flex flex-col focus:outline-none"
       tabIndex={0}
     >
-      <div className="w-full max-w-380">
-        <div className="text-[#e2b714] text-3xl font-mono mb-0 self-start">
-          {timeLeft}
+      <div className="flex justify-center py-4">
+        <div className="w-full max-w-380 text-left">
+          <div className="text-white text-4xl font-bold">TypeTech</div>
         </div>
-        <div className="text-3xl leading-relaxed font-mono mb-8 text-left relative">
-          <div className={`${!isWindowFocused ? 'blur-sm' : ''}`}>
-            {renderText()}
+      </div>
+      <div className="flex flex-col items-center justify-center flex-1 px-1">
+        <div className="w-full max-w-380">
+          <div className="text-[#e2b714] text-xl font-mono mb-0 self-end">
+            {timeLeft}
           </div>
-          {!isWindowFocused && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-white text-xl font-semibold px-6 py-3">
-                Pressione qualquer tecla para continuar!
-              </div>
+          <div className="text-3xl leading-relaxed font-mono mb-8 text-left relative">
+            <div className={`${!isWindowFocused ? 'blur-sm' : ''}`}>
+              {renderText()}
             </div>
-          )}
+            {!isWindowFocused && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="text-white text-xl font-semibold px-6 py-3">
+                  Pressione qualquer tecla para continuar!
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="text-center mb-4">
+            <button
+              onClick={resetTest}
+              className="bg-[#e2b714] hover:bg-[#f4d03f] text-[#323437] font-bold py-2 px-4 rounded transition duration-300"
+            >
+              Reiniciar
+            </button>
+          </div>
         </div>
 
         {isFinished && (

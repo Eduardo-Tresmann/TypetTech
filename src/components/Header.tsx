@@ -40,13 +40,28 @@ const Header: React.FC = () => {
   }, [user]);
 
   return (
-    <div className="flex justify-center py-4">
-      <div className="w-full max-w-[110ch] md:max-w-[140ch] lg:max-w-[175ch] xl:max-w-[200ch] 2xl:max-w-[220ch] mx-auto px-6 sm:px-8 lg:px-12">
-        <div className="flex items-center justify-between">
-          <button onClick={() => { window.location.reload(); }} className="text-white text-4xl font-bold">
-            TypeTech
-          </button>
-          <div>
+    <div className="flex justify-center items-center h-14 bg-[#323437]">
+      <div className="w-full max-w-[110ch] md:max-w-[140ch] lg:max-w-[175ch] xl:max-w-[200ch] 2xl:max-w-[220ch] mx-auto px-10 sm:px-16 md:px-24 lg:px-32 xl:px-40">
+        <div className="grid grid-cols-3 items-center">
+          <div className="justify-self-start">
+            <Link href="/home" className="flex items-center gap-2 text-white text-3xl font-bold hover:text-[#e2b714] transition-colors">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="5" width="18" height="14" rx="2" stroke="#e2b714" strokeWidth="2"/>
+                <path d="M6 9h2M10 9h2M14 9h2M6 13h2M10 13h2M14 13h2" stroke="#e2b714" strokeWidth="2" strokeLinecap="round"/>
+              </svg>
+              TypeTech
+            </Link>
+          </div>
+          <div className="justify-self-center">
+            <Link href="/leaderboards" className="flex items-center gap-2 text-white text-lg font-semibold tracking-wide hover:text-[#e2b714] transition-colors">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 18h18" stroke="#e2b714" strokeWidth="2" strokeLinecap="round"/>
+                <path d="M5 18l2-9 5 4 5-7 2 12" stroke="#e2b714" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Leaderboards
+            </Link>
+          </div>
+          <div className="justify-self-end">
             {!user ? (
               <Link href="/auth/login" className="py-2 px-4 text-lg bg-[#e2b714] text-black rounded hover:bg-[#d4c013] transition-colors">
                 Entrar

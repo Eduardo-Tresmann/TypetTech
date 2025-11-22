@@ -23,7 +23,7 @@ const TypingDisplay: React.FC<TypingDisplayProps> = ({
         <div className="text-[#e2b714] text-3xl font-mono mb-1 self-end">
           {timeLeft}
         </div>
-        <div ref={containerRef} tabIndex={-1} className="text-3xl leading-relaxed font-mono mb-8 text-left relative min-h-[calc(3lh)] max-h-[calc(3lh)] overflow-hidden">
+        <div ref={containerRef} tabIndex={-1} className="text-3xl leading-relaxed font-mono mb-8 text-left relative min-h-[calc(3lh)] max-h-[calc(3lh)] overflow-hidden outline-none focus:outline-none ring-0 focus:ring-0">
           <div className={`${!isWindowFocused ? 'blur-sm' : ''}`}>
             {renderText()}
           </div>
@@ -37,6 +37,7 @@ const TypingDisplay: React.FC<TypingDisplayProps> = ({
         </div>
         <div className="text-center mb-4" key={`button-${resetKey}`}>
           <button
+            tabIndex={1}
             onClick={(e) => {
               resetTest();
               e.currentTarget.blur();

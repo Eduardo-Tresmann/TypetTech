@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { generateText, getLines } from '@/utils/typingUtils';
+import { saveTypingResult } from '@/lib/db';
 
 export const useTypingTest = (): {
   timeLeft: number;
@@ -168,6 +169,17 @@ export const useTypingTest = (): {
       const elapsedTimeInMinutes = totalTime / 60;
       const finalWpm = Math.round((correctChars / 5) / elapsedTimeInMinutes);
       setWpm(finalWpm);
+
+      // Persistir resultado
+      (async () => {
+        await saveTypingResult({
+          total_time: totalTime,
+          wpm: finalWpm,
+          accuracy: finalAccuracy,
+          correct_letters: correctChars,
+          incorrect_letters: incorrectChars,
+        });
+      })();
     }
   }, [isFinished, userInput, text, totalTime]);
 

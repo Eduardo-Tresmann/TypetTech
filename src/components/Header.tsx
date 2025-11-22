@@ -1,11 +1,11 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { getSupabase, hasSupabaseConfig } from '@/lib/supabaseClient';
 
 const Header: React.FC = () => {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const [displayName, setDisplayName] = useState<string | null>(() => {
     if (typeof window !== 'undefined') {
       const cached = localStorage.getItem('profile.display_name');
@@ -21,6 +21,8 @@ const Header: React.FC = () => {
     return null;
   });
   const initials = (displayName ?? (user?.email as string | undefined)?.split('@')[0] ?? 'US').slice(0, 2).toUpperCase();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -39,6 +41,22 @@ const Header: React.FC = () => {
     load();
   }, [user]);
 
+  useEffect(() => {
+    const onDocClick = (e: MouseEvent) => {
+      if (!menuRef.current) return;
+      if (!menuRef.current.contains(e.target as Node)) setMenuOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false);
+    };
+    document.addEventListener('mousedown', onDocClick);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDocClick);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, []);
+
   return (
     <div className="flex justify-center items-center h-14 bg-[#323437]">
       <div className="w-full max-w-[110ch] md:max-w-[140ch] lg:max-w-[175ch] xl:max-w-[200ch] 2xl:max-w-[220ch] mx-auto px-10 sm:px-16 md:px-24 lg:px-32 xl:px-40">
@@ -46,8 +64,7 @@ const Header: React.FC = () => {
           <div className="justify-self-start">
             <Link href="/home" className="flex items-center gap-2 text-white text-3xl font-bold hover:text-[#e2b714] transition-colors">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="3" y="5" width="18" height="14" rx="2" stroke="#e2b714" strokeWidth="2"/>
-                <path d="M6 9h2M10 9h2M14 9h2M6 13h2M10 13h2M14 13h2" stroke="#e2b714" strokeWidth="2" strokeLinecap="round"/>
+                <path d="M13 2L4 14h7l-2 8 9-12h-7l2-8z" stroke="#e2b714" strokeWidth="2" strokeLinejoin="round"/>
               </svg>
               TypeTech
             </Link>
@@ -67,18 +84,56 @@ const Header: React.FC = () => {
                 Entrar
               </Link>
             ) : (
-              <Link href="/profile" className="flex items-center gap-3">
-                <span className="text-white hover:underline">
-                  {displayName ?? (user.email as string).split('@')[0]}
-                </span>
-                {avatarUrl ? (
-                  <img src={avatarUrl} alt="avatar" className="w-9 h-9 rounded-full object-cover" />
-                ) : (
-                  <div className="w-9 h-9 rounded-full bg-[#e2b714] text-black flex items-center justify-center font-semibold">
-                    {initials}
+              <div className="relative" ref={menuRef}>
+                <button type="button" onClick={() => setMenuOpen((v) => !v)} className="flex items-center gap-3">
+                  <span className="text-white hover:underline">
+                    {displayName ?? (user.email as string).split('@')[0]}
+                  </span>
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt="avatar" className="w-9 h-9 rounded-full object-cover" />
+                  ) : (
+                    <div className="w-9 h-9 rounded-full bg-[#e2b714] text-black flex items-center justify-center font-semibold">
+                      {initials}
+                    </div>
+                  )}
+                </button>
+                {menuOpen && (
+                <div className="absolute right-0 top-full mt-2">
+                  <div className="w-56 bg-[#2c2e31] text-white rounded-lg shadow-lg p-3 space-y-2">
+                    <Link href="/stats" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 text-[#d1d1d1] hover:text-[#e2b714]">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 20V10M10 20V6M16 20V13M3 20h18" stroke="#d1d1d1" strokeWidth="2" strokeLinecap="round"/>
+                      </svg>
+                      Estatísticas
+                    </Link>
+                    <Link href="/friends" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 text-[#d1d1d1] hover:text-[#e2b714]">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 7a4 4 0 110 8a4 4 0 010-8zm10 0a4 4 0 110 8a4 4 0 010-8z" stroke="#d1d1d1" strokeWidth="2"/>
+                      </svg>
+                      Amigos
+                    </Link>
+                    <Link href="/profile" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 text-[#d1d1d1] hover:text-[#e2b714]">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 3l9 9-9 9-9-9 9-9zm0 5v8" stroke="#d1d1d1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      Perfil
+                    </Link>
+                    <Link href="/settings" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 text-[#d1d1d1] hover:text-[#e2b714]">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 8a4 4 0 100 8 4 4 0 000-8zm9 4a9 9 0 11-18 0 9 9 0 0118 0z" stroke="#d1d1d1" strokeWidth="2"/>
+                      </svg>
+                      Configuração
+                    </Link>
+                    <button onClick={async () => { setMenuOpen(false); await signOut(); window.location.href = '/home'; }} className="flex w-full items-center gap-2 text-left text-[#d1d1d1] hover:text-[#e2b714]">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 17l5-5-5-5M4 12h11" stroke="#d1d1d1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      Sair da conta
+                    </button>
                   </div>
+                </div>
                 )}
-              </Link>
+              </div>
             )}
           </div>
         </div>

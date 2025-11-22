@@ -185,7 +185,7 @@ export default function ProfilePage() {
             />
           </div>
 
-          
+
 
           <div>
             <label className="block text-[#d1d1d1] mb-1">Foto de perfil</label>
@@ -210,12 +210,9 @@ export default function ProfilePage() {
             {!error && info && <div className="text-[#e2b714]">{info}</div>}
           </div>
 
-          <div className="flex items-center justify-between w-full">
-            <button onClick={handleSave} disabled={saving || loading} className="py-2 px-4 text-lg bg-[#e2b714] text-black rounded hover:bg-[#d4c013] transition-colors">
+          <div className="flex items-center justify-center w-full">
+            <button onClick={handleSave} disabled={saving || loading} className="py-2 px-6 text-lg bg-[#e2b714] text-black rounded hover:bg-[#d4c013] transition-colors">
               {saving ? 'Salvando...' : 'Salvar'}
-            </button>
-            <button onClick={handleSignOut} className="py-2 px-4 text-lg bg-[#ca4754] text-white rounded hover:bg-[#b33f4a] transition-colors">
-              Sair da conta
             </button>
           </div>
         </div>

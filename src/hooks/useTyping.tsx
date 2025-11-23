@@ -222,6 +222,21 @@ export const useTypingTest = (): {
   };
 
   useEffect(() => {
+    const onGlobalReset = () => resetTest();
+    window.addEventListener('typetech:reset', onGlobalReset as EventListener);
+    return () => {
+      window.removeEventListener('typetech:reset', onGlobalReset as EventListener);
+    };
+  }, [resetTest]);
+
+  useEffect(() => {
+    (window as any).typetechReset = () => resetTest();
+    return () => {
+      try { delete (window as any).typetechReset; } catch {}
+    };
+  }, [resetTest]);
+
+  useEffect(() => {
     if (!isActive) {
       setTimeLeft(totalTime);
     }

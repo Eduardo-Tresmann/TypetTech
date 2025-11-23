@@ -62,7 +62,16 @@ const Header: React.FC = () => {
       <div className="w-full max-w-[110ch] md:max-w-[140ch] lg:max-w-[175ch] xl:max-w-[200ch] 2xl:max-w-[220ch] mx-auto px-10 sm:px-16 md:px-24 lg:px-32 xl:px-40">
         <div className="grid grid-cols-3 items-center">
           <div className="justify-self-start">
-            <Link href="/home" className="flex items-center gap-2 text-white text-3xl font-bold hover:text-[#e2b714] transition-colors">
+            <Link href="/home?reset=1" className="flex items-center gap-2 text-white text-3xl font-bold hover:text-[#e2b714] transition-colors" onClick={(e) => {
+              try {
+                const isHome = typeof window !== 'undefined' && window.location.pathname.startsWith('/home');
+                const fn = (window as any).typetechReset as undefined | (() => void);
+                if (isHome && typeof fn === 'function') {
+                  e.preventDefault();
+                  fn();
+                }
+              } catch {}
+            }}>
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M13 2L4 14h7l-2 8 9-12h-7l2-8z" stroke="#e2b714" strokeWidth="2" strokeLinejoin="round"/>
               </svg>

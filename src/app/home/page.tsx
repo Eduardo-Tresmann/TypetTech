@@ -1,10 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useTypingTest } from '@/hooks/useTyping';
 import TypingDisplay from '@/components/TypingDisplay';
 import ResultsScreen from '@/components/ResultsScreen';
 import ModeBar from '@/components/ModeBar';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 export default function TypingTest() {
   const hook = useTypingTest();
@@ -23,6 +24,18 @@ export default function TypingTest() {
     totalTime,
     setTotalTime,
   } = hook;
+  const params = useSearchParams();
+  const router = useRouter();
+  const hasResetRef = useRef(false);
+  const resetParam = params.get('reset');
+
+  useEffect(() => {
+    if (resetParam === '1' && !hasResetRef.current) {
+      hasResetRef.current = true;
+      resetTest();
+      router.replace('/home');
+    }
+  }, [resetParam, resetTest, router]);
 
   return (
     <div className="min-h-screen bg-[#323437] flex flex-col overflow-hidden relative">
@@ -31,7 +44,7 @@ export default function TypingTest() {
         <div className="flex-1 flex items-center justify-center">
           <div className="flex flex-col items-center">
             <div className="w-full max-w-[110ch] md:max-w-[140ch] lg:max-w-[175ch] xl:max-w-[200ch] 2xl:max-w-[220ch] mx-auto px-6 sm:px-8 lg:px-12">
-              <ModeBar totalTime={totalTime} onSelectTime={setTotalTime} />
+              <ModeBar totalTime={totalTime} onSelectTime={setTotalTime} disableTab />
             </div>
             <TypingDisplay
               key={resetKey}

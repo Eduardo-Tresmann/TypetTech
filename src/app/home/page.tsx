@@ -5,6 +5,7 @@ import { useTypingTest } from '@/hooks/useTyping';
 import TypingDisplay from '@/components/TypingDisplay';
 import ResultsScreen from '@/components/ResultsScreen';
 import ModeBar from '@/components/ModeBar';
+import RecordNotification from '@/components/RecordNotification';
 import { useSearchParams, useRouter } from 'next/navigation';
 
 export default function TypingTest() {
@@ -23,6 +24,8 @@ export default function TypingTest() {
     containerRef,
     totalTime,
     setTotalTime,
+    isNewRecord,
+    recordInfo,
   } = hook;
   const params = useSearchParams();
   const router = useRouter();
@@ -32,6 +35,8 @@ export default function TypingTest() {
   const [frozenContent, setFrozenContent] = useState<React.ReactNode>(null);
   const prevResetKeyRef = useRef(resetKey);
   const hasInitialAnimationRef = useRef(false);
+  const [showRecordNotification, setShowRecordNotification] = useState(false);
+  const prevIsNewRecordRef = useRef(false);
 
   useEffect(() => {
     if (resetParam === '1' && !hasResetRef.current) {
@@ -90,8 +95,26 @@ export default function TypingTest() {
     }
   }, [resetKey, isAnimating]);
 
+  // Controlar exibição da notificação de recorde
+  useEffect(() => {
+    if (isNewRecord && !prevIsNewRecordRef.current && recordInfo) {
+      setShowRecordNotification(true);
+    }
+    prevIsNewRecordRef.current = isNewRecord;
+  }, [isNewRecord, recordInfo]);
+
   return (
     <div className="min-h-screen bg-[#323437] flex flex-col overflow-hidden relative">
+      {/* Notificação de recorde */}
+      {showRecordNotification && isNewRecord && recordInfo && (
+        <RecordNotification
+          newWpm={wpm}
+          previousRecord={recordInfo.previousRecord ?? 0}
+          recordType={recordInfo.type || 'overall'}
+          duration={recordInfo.type === 'duration' ? totalTime : undefined}
+          onClose={() => setShowRecordNotification(false)}
+        />
+      )}
       
       {!isFinished ? (
         <div className="flex-1 flex items-center justify-center">

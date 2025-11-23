@@ -1,7 +1,8 @@
 import React from 'react';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { generateText, getLines } from '@/utils/typingUtils';
-import { saveTypingResult } from '@/lib/db';
+import { saveTypingResult, getUserPersonalBest } from '@/lib/db';
+import { getSupabase } from '@/lib/supabaseClient';
 
 export const useTypingTest = (): {
   timeLeft: number;
@@ -17,6 +18,8 @@ export const useTypingTest = (): {
   containerRef: React.MutableRefObject<HTMLDivElement | null>;
   totalTime: number;
   setTotalTime: (t: number) => void;
+  isNewRecord: boolean;
+  recordInfo: { type: 'overall' | 'duration' | null; previousRecord: number | null } | null;
 } => {
   const [text, setText] = useState<string>('');
   const [userInput, setUserInput] = useState<string>('');
@@ -36,6 +39,8 @@ export const useTypingTest = (): {
   const [viewStartLine, setViewStartLine] = useState<number>(0);
   const [resetKey, setResetKey] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [isNewRecord, setIsNewRecord] = useState<boolean>(false);
+  const [recordInfo, setRecordInfo] = useState<{ type: 'overall' | 'duration' | null; previousRecord: number | null } | null>(null);
 
   useEffect(() => {
     setText(generateText(350));
@@ -206,8 +211,43 @@ export const useTypingTest = (): {
       const finalWpm = Math.round((correctChars / 5) / elapsedTimeInMinutes);
       setWpm(finalWpm);
 
-      // Persistir resultado
+      // Verificar recorde e persistir resultado
       (async () => {
+        const supabase = getSupabase();
+        const { data: userData } = await supabase.auth.getUser();
+        const user = userData?.user;
+
+        let newRecord = false;
+        let recordType: 'overall' | 'duration' | null = null;
+        let previousRecord: number | null = null;
+
+        if (user) {
+          // Buscar recorde pessoal antes de salvar
+          const personalBest = await getUserPersonalBest(user.id);
+          
+          // Verificar se bateu recorde geral
+          if (personalBest.overall === null || finalWpm > personalBest.overall) {
+            newRecord = true;
+            recordType = 'overall';
+            previousRecord = personalBest.overall;
+          }
+          // Verificar se bateu recorde específico da duração
+          else if (personalBest.byTime[totalTime] === null || finalWpm > (personalBest.byTime[totalTime] ?? 0)) {
+            newRecord = true;
+            recordType = 'duration';
+            previousRecord = personalBest.byTime[totalTime];
+          }
+
+          if (newRecord) {
+            setIsNewRecord(true);
+            setRecordInfo({ type: recordType, previousRecord });
+          } else {
+            setIsNewRecord(false);
+            setRecordInfo(null);
+          }
+        }
+
+        // Persistir resultado
         await saveTypingResult({
           total_time: totalTime,
           wpm: finalWpm,
@@ -254,6 +294,8 @@ export const useTypingTest = (): {
     setIncorrectLetters(0);
     setViewStartLine(0);
     setResetKey((prev) => prev + 1);
+    setIsNewRecord(false);
+    setRecordInfo(null);
     containerRef.current?.focus();
   };
 
@@ -343,5 +385,7 @@ export const useTypingTest = (): {
     containerRef,
     totalTime,
     setTotalTime,
+    isNewRecord,
+    recordInfo,
   };
 };

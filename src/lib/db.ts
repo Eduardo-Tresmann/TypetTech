@@ -40,7 +40,7 @@ type FetchFilters = {
   durations?: number[];
   start?: string;
   end?: string;
-  sortBy?: 'created_at' | 'wpm' | 'accuracy' | 'total_time';
+  sortBy?: 'created_at' | 'wpm' | 'accuracy' | 'total_time' | 'correct_letters' | 'incorrect_letters';
   order?: 'asc' | 'desc';
   wpmMin?: number;
   accMin?: number;
@@ -114,4 +114,30 @@ export const fetchProfiles = async (ids: string[]) => {
 
 export const pairKey = (a: string, b: string) => {
   return a < b ? `${a}|${b}` : `${b}|${a}`;
+};
+
+export const getUserPersonalBest = async (userId: string) => {
+  const supabase = getSupabase();
+  const { data: results, error } = await supabase
+    .from('typing_results')
+    .select('wpm, total_time')
+    .eq('user_id', userId);
+
+  if (error || !results || results.length === 0) {
+    return { overall: null, byTime: { 15: null, 30: null, 60: null, 120: null } };
+  }
+
+  // Melhor WPM geral
+  const overall = Math.max(...results.map(r => r.wpm));
+
+  // Melhor WPM por duração
+  const byTime: Record<number, number | null> = { 15: null, 30: null, 60: null, 120: null };
+  for (const duration of [15, 30, 60, 120]) {
+    const resultsForDuration = results.filter(r => r.total_time === duration);
+    if (resultsForDuration.length > 0) {
+      byTime[duration] = Math.max(...resultsForDuration.map(r => r.wpm));
+    }
+  }
+
+  return { overall, byTime };
 };

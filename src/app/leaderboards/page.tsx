@@ -79,67 +79,79 @@ export default function LeaderboardsPage() {
   }, [selected, user?.id]);
 
   return (
-    <div className="min-h-screen bg-[#323437] flex flex-col items-center justify-start px-6">
+    <div className="min-h-screen bg-[#323437] flex flex-col items-center justify-start px-6 pb-8">
       <div className="w-full max-w-[120ch] text-white mt-14">
-        <h2 className="text-xl font-semibold text-center mb-4">Leaderboards</h2>
-        <div className="mb-6 w-full flex justify-center">
-          <div className="w-full rounded-xl bg-[#323437] ring-1 ring-[#3a3c3f] overflow-hidden">
-            <div className="flex items-center justify-center gap-3 p-3">
-              <ModeBar totalTime={selected} onSelectTime={setSelected} />
+        <div className="space-y-8">
+          <div>
+            <h2 className="text-xl font-semibold text-center mb-6">Leaderboards</h2>
+            <div className="mb-6 w-full flex justify-center">
+              <div className="w-full rounded-xl bg-[#2b2d2f] ring-1 ring-[#3a3c3f] overflow-hidden">
+                <div className="flex items-center justify-center gap-3 p-3">
+                  <ModeBar totalTime={selected} onSelectTime={setSelected} />
+                </div>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="rounded p-6 text-white ring-1 ring-[#3a3c3f]">
-          <h2 className="text-xl font-semibold text-center mb-4">Top WPM • {selected}s</h2>
-          {loading ? (
-            <div className="flex items-center justify-center gap-2 py-12">
-              <LoadingSpinner />
-              <span className="text-[#d1d1d1]">Carregando...</span>
-            </div>
-          ) : rows.length === 0 ? (
-            <div className="text-center py-12 text-[#d1d1d1]">
-              <div className="text-4xl mb-3">🏆</div>
-              <div className="text-lg font-medium mb-1">Nenhum resultado ainda</div>
-              <div className="text-sm text-[#6b6e70]">Complete alguns testes para aparecer no leaderboard</div>
-            </div>
-          ) : (
-            <>
-              <div className="grid grid-cols-10 px-2 text-[#d1d1d1] mb-1">
-                <div className="col-span-1">Pos.</div>
-                <div className="col-span-5">Usuário</div>
-                <div className="col-span-2">WPM</div>
-                <div className="col-span-2">Precisão</div>
-              </div>
-              <div className="divide-y divide-[#3a3c3f]">
-                {rows.map((r, idx) => {
-                  const displayBase = r.profiles?.display_name ?? r.display_name ?? r.email_prefix ?? 'Usuário';
-                  const displayName = displayBase?.includes('@') ? displayBase.split('@')[0] : displayBase;
-                  const avatarUrl = r.profiles?.avatar_url ?? r.avatar_url ?? null;
-                  const initials = (displayName ?? 'US').slice(0,2).toUpperCase();
-                  return (
-                  <div key={`${r.user_id}-${r.created_at}`} className="py-1.5 px-2 grid grid-cols-10 items-center hover:bg-[#2b2d2f] rounded">
-                    <div className="col-span-1 text-[#d1d1d1]">{idx + 1}</div>
-                    <Link href={`/stats/${encodeURIComponent(r.user_id)}`} onClick={()=>{ try{ if (typeof window !== 'undefined') { localStorage.setItem(`profile.cache.${r.user_id}`, JSON.stringify({ display_name: displayName, avatar_url: avatarUrl })); } }catch{} }} className="col-span-5 flex items-center gap-3">
-                      {avatarUrl ? (
-                        <img src={avatarUrl} alt="avatar" className="w-8 h-8 rounded-full object-cover" loading="lazy" decoding="async" referrerPolicy="no-referrer" />
-                      ) : (
-                        <div className="w-8 h-8 rounded-full bg-[#e2b714] text-black flex items-center justify-center text-xs font-semibold">
-                          {initials}
-                        </div>
-                      )}
-                      <div>
-                        <div className="text-white">{displayName}</div>
-                        <div className="text-[#6b6e70] text-sm">{new Date(r.created_at).toLocaleString()}</div>
-                      </div>
-                    </Link>
-                    <div className="col-span-2 text-yellow-400 font-semibold">{r.wpm} WPM</div>
-                    <div className="col-span-2 text-[#d1d1d1]">{r.accuracy}%</div>
+          <div className="bg-[#2b2d2f] rounded-lg border border-[#3a3c3f] overflow-hidden">
+            <div className="p-6">
+              <h2 className="text-xl font-semibold text-center mb-6">Top WPM • {selected}s</h2>
+              {loading ? (
+                <div className="flex items-center justify-center gap-2 py-12">
+                  <LoadingSpinner />
+                  <span className="text-[#d1d1d1]">Carregando...</span>
+                </div>
+              ) : rows.length === 0 ? (
+                <div className="text-center py-12 text-[#d1d1d1]">
+                  <div className="text-4xl mb-3">🏆</div>
+                  <div className="text-lg font-medium mb-1">Nenhum resultado ainda</div>
+                  <div className="text-sm text-[#6b6e70]">Complete alguns testes para aparecer no leaderboard</div>
+                </div>
+              ) : (
+                <>
+                  <div className="grid gap-6 px-6 py-3 text-[#d1d1d1] text-sm font-medium border-b border-[#3a3c3f]" style={{ gridTemplateColumns: '1fr 3fr 2fr 2fr 2fr 1.5fr 1.5fr' }}>
+                    <div className="text-center">Pos.</div>
+                    <div>Usuário</div>
+                    <div className="text-center">WPM</div>
+                    <div className="text-center">Precisão</div>
+                    <div className="text-center">Data/Hora</div>
+                    <div className="text-center">Acertos</div>
+                    <div className="text-center">Erros</div>
                   </div>
-                );})}
-              </div>
-            </>
-          )}
+                  <div className="divide-y divide-[#3a3c3f]">
+                    {rows.map((r, idx) => {
+                      const displayBase = r.profiles?.display_name ?? r.display_name ?? r.email_prefix ?? 'Usuário';
+                      const displayName = displayBase?.includes('@') ? displayBase.split('@')[0] : displayBase;
+                      const avatarUrl = r.profiles?.avatar_url ?? r.avatar_url ?? null;
+                      const initials = (displayName ?? 'US').slice(0,2).toUpperCase();
+                      return (
+                        <div key={`${r.user_id}-${r.created_at}`} className="grid gap-6 px-6 py-3 items-center hover:bg-[#323437] transition-colors" style={{ gridTemplateColumns: '1fr 3fr 2fr 2fr 2fr 1.5fr 1.5fr' }}>
+                          <div className="text-[#d1d1d1] text-sm text-center font-semibold">{idx + 1}</div>
+                          <Link href={`/stats/${encodeURIComponent(r.user_id)}`} onClick={()=>{ try{ if (typeof window !== 'undefined') { localStorage.setItem(`profile.cache.${r.user_id}`, JSON.stringify({ display_name: displayName, avatar_url: avatarUrl })); } }catch{} }} className="flex items-center gap-3 hover:text-[#e2b714] transition-colors">
+                            {avatarUrl ? (
+                              <img src={avatarUrl} alt="avatar" className="w-10 h-10 rounded-full object-cover" loading="lazy" decoding="async" referrerPolicy="no-referrer" />
+                            ) : (
+                              <div className="w-10 h-10 rounded-full bg-[#e2b714] text-black flex items-center justify-center text-sm font-semibold">
+                                {initials}
+                              </div>
+                            )}
+                            <div>
+                              <div className="text-white font-medium">{displayName}</div>
+                            </div>
+                          </Link>
+                          <div className="text-yellow-400 font-semibold text-sm text-center">{r.wpm} WPM</div>
+                          <div className="text-[#d1d1d1] text-sm text-center">{r.accuracy}%</div>
+                          <div className="text-[#d1d1d1] text-sm text-center">{new Date(r.created_at).toLocaleString('pt-BR')}</div>
+                          <div className="text-[#d1d1d1] text-sm text-center">{r.correct_letters ?? '-'}</div>
+                          <div className="text-[#d1d1d1] text-sm text-center">{r.incorrect_letters ?? '-'}</div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>

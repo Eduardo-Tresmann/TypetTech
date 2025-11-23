@@ -23,7 +23,7 @@ export default function StatsPage() {
   const [durations, setDurations] = useState<number[]>([15, 30, 60, 120]);
   const [start, setStart] = useState<string>('');
   const [end, setEnd] = useState<string>('');
-  const [sortBy, setSortBy] = useState<'created_at'|'wpm'|'accuracy'|'total_time'>('created_at');
+  const [sortBy, setSortBy] = useState<'created_at'|'wpm'|'accuracy'|'total_time'|'correct_letters'|'incorrect_letters'>('created_at');
   const [order, setOrder] = useState<'asc'|'desc'>('desc');
   const [wpmMin, setWpmMin] = useState<number | undefined>(undefined);
   const [accMin, setAccMin] = useState<number | undefined>(undefined);
@@ -148,10 +148,10 @@ export default function StatsPage() {
               </div>
             )}
             <div className="bg-[#2b2d2f] rounded-lg border border-[#3a3c3f] overflow-hidden">
-              <div className="grid grid-cols-12 gap-4 px-4 py-3 text-[#d1d1d1] text-sm font-medium border-b border-[#3a3c3f]">
+              <div className="grid gap-6 px-6 py-3 text-[#d1d1d1] text-sm font-medium border-b border-[#3a3c3f]" style={{ gridTemplateColumns: '3fr 2fr 2fr 2fr 1.5fr 1.5fr' }}>
                 <button
                   onClick={()=>{setPage(0); setSortBy((prev)=> prev==='created_at' ? prev : 'created_at'); setOrder((prev)=> sortBy==='created_at' ? (prev==='desc'?'asc':'desc') : 'desc');}}
-                  className="col-span-4 text-left cursor-pointer hover:text-[#e2b714] flex items-center gap-2 transition-colors"
+                  className="text-left cursor-pointer hover:text-[#e2b714] flex items-center gap-2 transition-colors"
                 >
                   Data/Hora
                   {sortBy==='created_at' && (
@@ -160,7 +160,7 @@ export default function StatsPage() {
                 </button>
                 <button
                   onClick={()=>{setPage(0); setSortBy((prev)=> prev==='total_time' ? prev : 'total_time'); setOrder((prev)=> sortBy==='total_time' ? (prev==='desc'?'asc':'desc') : 'desc');}}
-                  className="col-span-1 text-left cursor-pointer hover:text-[#e2b714] flex items-center gap-2 transition-colors"
+                  className="text-left cursor-pointer hover:text-[#e2b714] flex items-center gap-2 transition-colors"
                 >
                   Duração
                   {sortBy==='total_time' && (
@@ -169,7 +169,7 @@ export default function StatsPage() {
                 </button>
                 <button
                   onClick={()=>{setPage(0); setSortBy((prev)=> prev==='wpm' ? prev : 'wpm'); setOrder((prev)=> sortBy==='wpm' ? (prev==='desc'?'asc':'desc') : 'desc');}}
-                  className="col-span-1 text-left cursor-pointer hover:text-[#e2b714] flex items-center gap-2 transition-colors"
+                  className="text-left cursor-pointer hover:text-[#e2b714] flex items-center gap-2 transition-colors"
                 >
                   WPM
                   {sortBy==='wpm' && (
@@ -178,26 +178,41 @@ export default function StatsPage() {
                 </button>
                 <button
                   onClick={()=>{setPage(0); setSortBy((prev)=> prev==='accuracy' ? prev : 'accuracy'); setOrder((prev)=> sortBy==='accuracy' ? (prev==='desc'?'asc':'desc') : 'desc');}}
-                  className="col-span-1 text-left cursor-pointer hover:text-[#e2b714] flex items-center gap-2 transition-colors"
+                  className="text-left cursor-pointer hover:text-[#e2b714] flex items-center gap-2 transition-colors"
                 >
                   Precisão
                   {sortBy==='accuracy' && (
                     <span className="text-[#e2b714] text-base">{order==='asc'?'↑':'↓'}</span>
                   )}
                 </button>
-                <div className="col-span-5">Detalhes</div>
+                <button
+                  onClick={()=>{setPage(0); setSortBy((prev)=> prev==='correct_letters' ? prev : 'correct_letters'); setOrder((prev)=> sortBy==='correct_letters' ? (prev==='desc'?'asc':'desc') : 'desc');}}
+                  className="text-center cursor-pointer hover:text-[#e2b714] flex items-center justify-center gap-2 transition-colors"
+                >
+                  Acertos
+                  {sortBy==='correct_letters' && (
+                    <span className="text-[#e2b714] text-base">{order==='asc'?'↑':'↓'}</span>
+                  )}
+                </button>
+                <button
+                  onClick={()=>{setPage(0); setSortBy((prev)=> prev==='incorrect_letters' ? prev : 'incorrect_letters'); setOrder((prev)=> sortBy==='incorrect_letters' ? (prev==='desc'?'asc':'desc') : 'desc');}}
+                  className="text-center cursor-pointer hover:text-[#e2b714] flex items-center justify-center gap-2 transition-colors"
+                >
+                  Erros
+                  {sortBy==='incorrect_letters' && (
+                    <span className="text-[#e2b714] text-base">{order==='asc'?'↑':'↓'}</span>
+                  )}
+                </button>
               </div>
               <div className="divide-y divide-[#3a3c3f]">
                 {resultsFiltered.map((r) => (
-                  <div key={r.id} className="grid grid-cols-12 gap-4 px-4 py-3 items-center hover:bg-[#323437] transition-colors">
-                    <div className="col-span-4 text-[#d1d1d1] text-sm">{new Date(r.created_at).toLocaleString('pt-BR')}</div>
-                    <div className="col-span-1 text-[#d1d1d1] text-sm">{r.total_time}s</div>
-                    <div className="col-span-1 text-yellow-400 font-semibold text-sm">{r.wpm} WPM</div>
-                    <div className="col-span-1 text-[#d1d1d1] text-sm">{r.accuracy}%</div>
-                    <div className="col-span-5 flex flex-wrap gap-2">
-                      <span className="inline-block px-3 py-1 rounded-full border border-[#3a3c3f] bg-[#323437] text-[#d1d1d1] text-xs">{r.correct_letters} acertos</span>
-                      <span className="inline-block px-3 py-1 rounded-full border border-[#3a3c3f] bg-[#323437] text-[#d1d1d1] text-xs">{r.incorrect_letters} erros</span>
-                    </div>
+                  <div key={r.id} className="grid gap-6 px-6 py-3 items-center hover:bg-[#323437] transition-colors" style={{ gridTemplateColumns: '3fr 2fr 2fr 2fr 1.5fr 1.5fr' }}>
+                    <div className="text-[#d1d1d1] text-sm">{new Date(r.created_at).toLocaleString('pt-BR')}</div>
+                    <div className="text-[#d1d1d1] text-sm">{r.total_time}s</div>
+                    <div className="text-yellow-400 font-semibold text-sm">{r.wpm} WPM</div>
+                    <div className="text-[#d1d1d1] text-sm">{r.accuracy}%</div>
+                    <div className="text-[#d1d1d1] text-sm text-center">{r.correct_letters}</div>
+                    <div className="text-[#d1d1d1] text-sm text-center">{r.incorrect_letters}</div>
                   </div>
                 ))}
                 {!loading && resultsFiltered.length === 0 && (

@@ -8,6 +8,35 @@ create table if not exists public.profiles (
   updated_at timestamptz not null default now()
 );
 
+create unique index if not exists profiles_display_name_unique
+  on public.profiles ((lower(trim(display_name))))
+  where display_name is not null;
+
+create or replace function public.normalize_display_name()
+returns trigger as $$
+begin
+  if new.display_name is not null then
+    new.display_name := trim(new.display_name);
+  end if;
+  return new;
+end;
+$$ language plpgsql;
+
+drop trigger if exists profiles_normalize_display_name on public.profiles;
+create trigger profiles_normalize_display_name
+before insert or update on public.profiles
+for each row execute function public.normalize_display_name();
+
+do $$
+begin
+  if not exists (
+    select 1 from pg_constraint where conname = 'profiles_display_name_len_chk'
+  ) then
+    alter table public.profiles add constraint profiles_display_name_len_chk
+      check (display_name is null or char_length(trim(display_name)) between 3 and 24);
+  end if;
+end $$;
+
 -- Índice para ordenar/consultar por atualização
 create index if not exists profiles_updated_idx on public.profiles (updated_at desc);
 
@@ -34,4 +63,3 @@ create policy profiles_update_own on public.profiles
   to authenticated
   using (auth.uid() = id)
   with check (auth.uid() = id);
-

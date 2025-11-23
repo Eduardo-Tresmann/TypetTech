@@ -11,6 +11,7 @@ export const translateError = (err: any): string => {
   if (msg.includes('signups not allowed') || msg.includes('signup not allowed')) return 'Cadastro desativado.';
   if (msg.includes('too many requests') || msg.includes('rate limit') || status === 429) return 'Muitas tentativas. Aguarde alguns minutos e tente novamente.';
   if (msg.includes('invalid token') || msg.includes('token expired') || msg.includes('expired')) return 'Link inválido ou expirado.';
+  if (msg.includes('duplicate key value') || msg.includes('unique constraint')) return 'Este nome de perfil já está em uso.';
   if (status && Number(status) >= 500) return 'Erro no servidor. Tente novamente mais tarde.';
   return raw || 'Não foi possível completar a operação.';
 };

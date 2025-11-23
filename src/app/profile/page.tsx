@@ -73,6 +73,8 @@ export default function ProfilePage() {
     load();
   }, [user, defaultName]);
 
+  
+
   const handleSave = async () => {
     setSaving(true);
     setError(null);
@@ -81,6 +83,23 @@ export default function ProfilePage() {
       if (!user) throw new Error('Usuário não autenticado.');
       if (!hasSupabaseConfig()) throw new Error('Supabase não configurado.');
       const supabase = getSupabase();
+      const candidateRaw = profile.display_name ?? defaultName ?? '';
+      const candidate = candidateRaw.trim();
+      if (candidate.length < 3 || candidate.length > 24) {
+        setError('O nome do perfil deve ter entre 3 e 24 caracteres.');
+        return;
+      }
+      const { count, error: findError } = await supabase
+        .from('profiles')
+        .select('id', { count: 'exact', head: true })
+        .neq('id', user.id)
+        .ilike('display_name', candidate);
+      if (findError) throw findError;
+      const hasDup = (count ?? 0) > 0;
+      if (hasDup) {
+        setError('Este nome de perfil já está em uso.');
+        return;
+      }
 
       let avatarUrl = profile.avatar_url ?? null;
       const fileToDataUrl = (file: File) =>
@@ -116,7 +135,7 @@ export default function ProfilePage() {
 
       const toSave = {
         id: user.id,
-        display_name: profile.display_name ?? defaultName,
+        display_name: candidate,
         avatar_url: avatarUrl,
         updated_at: new Date().toISOString(),
       };
@@ -182,6 +201,7 @@ export default function ProfilePage() {
               value={profile.display_name ?? ''}
               onChange={(e) => setProfile((p) => ({ ...p, display_name: e.target.value }))}
               className="w-full p-3 rounded bg-[#1f2022] text-white outline-none"
+              maxLength={24}
               placeholder={defaultName}
             />
           </div>

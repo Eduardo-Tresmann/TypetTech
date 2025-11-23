@@ -38,7 +38,7 @@ export const useTypingTest = (): {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setText(generateText(200));
+    setText(generateText(350));
     const updateMaxChars = () => {
       const el = containerRef.current;
       const containerWidth = el?.clientWidth || window.innerWidth;
@@ -69,8 +69,8 @@ export const useTypingTest = (): {
   }, []);
 
   useEffect(() => {
-    if (currentIndex > text.length - 100) {
-      setText((prevText) => prevText + ' ' + generateText(50)); // Append 50 more words
+    if (currentIndex > text.length - 150) {
+      setText((prevText) => prevText + ' ' + generateText(100));
     }
   }, [currentIndex, text.length]);
 
@@ -206,7 +206,7 @@ export const useTypingTest = (): {
   }, [handleKeyDown]);
 
   const resetTest = () => {
-    setText(generateText(200));
+    setText(generateText(350));
     setUserInput('');
     setCurrentIndex(0);
     setTimeLeft(totalTime);

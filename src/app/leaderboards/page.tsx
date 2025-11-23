@@ -96,12 +96,11 @@ export default function LeaderboardsPage() {
             <div className="text-[#d1d1d1]">Nenhum resultado ainda.</div>
           ) : (
             <>
-              <div className="grid grid-cols-12 px-2 text-[#d1d1d1] mb-1">
+              <div className="grid grid-cols-10 px-2 text-[#d1d1d1] mb-1">
                 <div className="col-span-1">Pos.</div>
                 <div className="col-span-5">Usuário</div>
                 <div className="col-span-2">WPM</div>
                 <div className="col-span-2">Precisão</div>
-                <div className="col-span-2">Detalhes</div>
               </div>
               <div className="divide-y divide-[#3a3c3f]">
                 {rows.map((r, idx) => {
@@ -110,7 +109,7 @@ export default function LeaderboardsPage() {
                   const avatarUrl = r.profiles?.avatar_url ?? r.avatar_url ?? null;
                   const initials = (displayName ?? 'US').slice(0,2).toUpperCase();
                   return (
-                  <div key={`${r.user_id}-${r.created_at}`} className="py-2 px-2 grid grid-cols-12 items-center hover:bg-[#2b2d2f] rounded">
+                  <div key={`${r.user_id}-${r.created_at}`} className="py-1.5 px-2 grid grid-cols-10 items-center hover:bg-[#2b2d2f] rounded">
                     <div className="col-span-1 text-[#d1d1d1]">{idx + 1}</div>
                     <div className="col-span-5 flex items-center gap-3">
                       {avatarUrl ? (
@@ -127,10 +126,6 @@ export default function LeaderboardsPage() {
                     </div>
                     <div className="col-span-2 text-yellow-400 font-semibold">{r.wpm} WPM</div>
                     <div className="col-span-2 text-[#d1d1d1]">{r.accuracy}%</div>
-                    <div className="col-span-2">
-                      <span className="inline-block px-2 py-1 rounded-full border border-[#3a3c3f] text-[#d1d1d1] mr-2">{r.correct_letters ?? 0} acertos</span>
-                      <span className="inline-block px-2 py-1 rounded-full border border-[#3a3c3f] text-[#d1d1d1]">{r.incorrect_letters ?? 0} erros</span>
-                    </div>
                   </div>
                 );})}
               </div>

@@ -43,7 +43,7 @@ export default function TypingTest() {
       {!isFinished ? (
         <div className="flex-1 flex items-center justify-center">
           <div className="flex flex-col items-center">
-            <div className="w-full max-w-[110ch] md:max-w-[140ch] lg:max-w-[175ch] xl:max-w-[200ch] 2xl:max-w-[220ch] mx-auto px-6 sm:px-8 lg:px-12">
+            <div className="w-full max-w-[110ch] md:max-w-[140ch] lg:max-w-[175ch] xl:max-w-[200ch] 2xl:max-w-[220ch] mx-auto px-10 sm:px-16 md:px-24 lg:px-32 xl:px-40">
               <ModeBar totalTime={totalTime} onSelectTime={setTotalTime} disableTab />
             </div>
             <TypingDisplay

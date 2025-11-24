@@ -297,16 +297,14 @@ export default function NotificationBell() {
           e.stopPropagation();
           setIsOpen(!isOpen);
         }}
-        className="relative flex items-center justify-center w-9 h-9 text-white hover:text-[#e2b714] transition-colors cursor-pointer"
+        className="relative flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 text-white hover:text-[#e2b714] transition-colors cursor-pointer min-h-[44px] min-w-[44px]"
         aria-label="Notificações"
       >
         <svg
-          width="20"
-          height="20"
           viewBox="0 0 24 24"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="w-5 h-5"
+          className="w-5 h-5 sm:w-6 sm:h-6"
         >
           <path
             d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"
@@ -331,13 +329,13 @@ export default function NotificationBell() {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-80 max-h-[500px] bg-[#2c2e31] rounded-lg shadow-lg overflow-hidden z-[100] border border-[#3a3c3f]">
+        <div className="fixed sm:absolute right-2 sm:right-0 top-[calc(3.5rem+0.5rem)] sm:top-full sm:mt-2 w-[calc(100vw-1rem)] sm:w-80 max-w-[calc(100vw-1rem)] sm:max-w-none max-h-[calc(100vh-5rem)] sm:max-h-[500px] bg-[#2c2e31] rounded-lg shadow-lg overflow-hidden z-[100] border border-[#3a3c3f]">
           <div className="p-3 border-b border-[#3a3c3f] flex items-center justify-between">
-            <h3 className="text-white font-semibold">Notificações</h3>
+            <h3 className="text-white font-semibold text-sm sm:text-base">Notificações</h3>
             {unreadCount > 0 && (
               <button
                 onClick={markAllAsRead}
-                className="text-xs text-[#e2b714] hover:text-[#d4c013] transition-colors"
+                className="text-xs text-[#e2b714] hover:text-[#d4c013] transition-colors min-h-[44px] px-2"
                 title="Marcar todas como lidas"
               >
                 Marcar todas como lidas
@@ -347,14 +345,14 @@ export default function NotificationBell() {
 
           <div className="overflow-y-auto max-h-[450px]">
             {loading ? (
-              <div className="p-4 flex items-center justify-center gap-2 text-[#d1d1d1]">
+              <div className="p-4 flex items-center justify-center gap-2 text-[#d1d1d1] text-sm">
                 <LoadingSpinner size="sm" />
                 <span>Carregando...</span>
               </div>
             ) : notifications.length === 0 ? (
               <div className="p-8 text-center text-[#d1d1d1]">
-                <div className="text-3xl mb-2">🔔</div>
-                <div className="text-sm">Nenhuma notificação</div>
+                <div className="text-2xl sm:text-3xl mb-2">🔔</div>
+                <div className="text-xs sm:text-sm">Nenhuma notificação</div>
               </div>
             ) : (
               <div className="divide-y divide-[#3a3c3f]">
@@ -362,7 +360,7 @@ export default function NotificationBell() {
                   <button
                     key={notification.id}
                     onClick={() => handleNotificationClick(notification)}
-                    className={`w-full text-left p-3 hover:bg-[#1f2022] transition-colors ${
+                    className={`w-full text-left p-3 hover:bg-[#1f2022] transition-colors min-h-[44px] ${
                       !notification.read_at ? 'bg-[#1f2022]' : ''
                     }`}
                   >
@@ -371,10 +369,10 @@ export default function NotificationBell() {
                         <img
                           src={notification.sender_profile.avatar_url}
                           alt={notification.sender_profile.display_name || 'Usuário'}
-                          className="w-10 h-10 rounded-full object-cover flex-shrink-0"
+                          className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover flex-shrink-0 max-w-full h-auto"
                         />
                       ) : (
-                        <div className="w-10 h-10 rounded-full bg-[#e2b714] text-black flex items-center justify-center font-semibold flex-shrink-0">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#e2b714] text-black flex items-center justify-center font-semibold text-xs sm:text-sm flex-shrink-0">
                           {(notification.sender_profile?.display_name || 'U')
                             .slice(0, 2)
                             .toUpperCase()}
@@ -382,7 +380,7 @@ export default function NotificationBell() {
                       )}
                       <div className="flex-1 min-w-0">
                         <p
-                          className={`text-sm ${!notification.read_at ? 'text-white font-medium' : 'text-[#d1d1d1]'}`}
+                          className={`text-xs sm:text-sm ${!notification.read_at ? 'text-white font-medium' : 'text-[#d1d1d1]'}`}
                         >
                           {getNotificationText(notification)}
                         </p>

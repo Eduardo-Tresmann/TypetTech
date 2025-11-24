@@ -22,7 +22,7 @@ import { getCachedDisplayName, getCachedAvatarUrl, setCachedProfile } from '@/ut
 const AVATARS_BUCKET = process.env.NEXT_PUBLIC_AVATARS_BUCKET ?? 'avatars';
 
 export default function ProfilePage() {
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const [profile, setProfile] = useState<Profile>(() => ({
     display_name: getCachedDisplayName(),
     avatar_url: getCachedAvatarUrl(),
@@ -160,10 +160,6 @@ export default function ProfilePage() {
     }
   };
 
-  const handleSignOut = async () => {
-    await signOut();
-    window.location.href = '/home';
-  };
 
   const handleAvatarFileSelect = (file: File) => {
     const reader = new FileReader();
@@ -212,7 +208,6 @@ export default function ProfilePage() {
           onDisplayNameChange={name => setProfile(p => ({ ...p, display_name: name }))}
           onAvatarFileSelect={handleAvatarFileSelect}
           onSave={handleSave}
-          onSignOut={handleSignOut}
           saving={saving}
           loading={loading}
           error={error}

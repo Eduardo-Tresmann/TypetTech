@@ -15,7 +15,7 @@ const ResetButton: React.FC<ResetButtonProps> = ({ text, onClick, className = ''
   return (
     <button
       onClick={handleClick}
-      className={`bg-[#e2b714] hover:bg-[#f4d03f] text-[#323437] font-bold rounded transition duration-300 ${className}`}
+      className={`bg-[#e2b714] hover:bg-[#f4d03f] text-[#323437] font-bold rounded transition duration-300 min-h-[44px] min-w-[44px] ${className}`}
     >
       {text}
     </button>

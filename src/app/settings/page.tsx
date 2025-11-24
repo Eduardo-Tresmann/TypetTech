@@ -48,22 +48,22 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#323437] flex items-center justify-center px-6 py-4">
+    <div className="min-h-screen bg-[#323437] flex items-center justify-center px-4 sm:px-6 py-4 pt-20 sm:pt-4">
       <div className="w-full max-w-md">
         <div className="mb-5">
-          <h1 className="text-white text-2xl font-bold mb-2">Configurações</h1>
-          <p className="text-[#d1d1d1] text-sm">Altere sua senha de acesso</p>
+          <h1 className="text-white text-xl sm:text-2xl font-bold mb-2">Configurações</h1>
+          <p className="text-[#d1d1d1] text-xs sm:text-sm">Altere sua senha de acesso</p>
         </div>
 
-        <div className="bg-[#2b2d2f] rounded-xl border border-[#3a3c3f] p-6 text-white shadow-xl">
-          <div className="space-y-4">
+        <div className="bg-[#2b2d2f] rounded-xl border border-[#3a3c3f] p-4 sm:p-6 text-white shadow-xl">
+          <div className="space-y-4 sm:space-y-3">
             <div>
               <label className="block text-[#d1d1d1] text-sm font-medium mb-1.5">Senha atual</label>
               <input
                 type="password"
                 value={currentPassword}
                 onChange={e => setCurrentPassword(e.target.value)}
-                className="w-full p-3.5 rounded-lg bg-[#1f2022] text-white outline-none border border-[#3a3c3f] focus:border-[#e2b714] focus:ring-2 focus:ring-[#e2b714]/20 transition-all text-sm"
+                className="w-full p-3 sm:p-3.5 rounded-lg bg-[#1f2022] text-white outline-none border border-[#3a3c3f] focus:border-[#e2b714] focus:ring-2 focus:ring-[#e2b714]/20 transition-all text-base sm:text-sm"
                 placeholder="Digite sua senha atual"
               />
             </div>
@@ -74,7 +74,7 @@ export default function SettingsPage() {
                 type="password"
                 value={newPassword}
                 onChange={e => setNewPassword(e.target.value)}
-                className="w-full p-3.5 rounded-lg bg-[#1f2022] text-white outline-none border border-[#3a3c3f] focus:border-[#e2b714] focus:ring-2 focus:ring-[#e2b714]/20 transition-all text-sm"
+                className="w-full p-3 sm:p-3.5 rounded-lg bg-[#1f2022] text-white outline-none border border-[#3a3c3f] focus:border-[#e2b714] focus:ring-2 focus:ring-[#e2b714]/20 transition-all text-base sm:text-sm"
                 placeholder="Digite a nova senha (mín. 6 caracteres)"
               />
             </div>
@@ -87,7 +87,7 @@ export default function SettingsPage() {
                 type="password"
                 value={confirmPassword}
                 onChange={e => setConfirmPassword(e.target.value)}
-                className="w-full p-3.5 rounded-lg bg-[#1f2022] text-white outline-none border border-[#3a3c3f] focus:border-[#e2b714] focus:ring-2 focus:ring-[#e2b714]/20 transition-all text-sm"
+                className="w-full p-3 sm:p-3.5 rounded-lg bg-[#1f2022] text-white outline-none border border-[#3a3c3f] focus:border-[#e2b714] focus:ring-2 focus:ring-[#e2b714]/20 transition-all text-base sm:text-sm"
                 placeholder="Repita a nova senha"
               />
             </div>
@@ -134,7 +134,7 @@ export default function SettingsPage() {
               <button
                 onClick={handleChangePassword}
                 disabled={loading}
-                className="w-full py-3.5 px-6 bg-[#e2b714] text-black rounded-lg hover:bg-[#d4c013] transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed font-semibold shadow-lg hover:shadow-xl disabled:shadow-none text-sm"
+                className="w-full py-3.5 sm:py-3 px-6 bg-[#e2b714] text-black rounded-lg hover:bg-[#d4c013] transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed font-semibold shadow-lg hover:shadow-xl disabled:shadow-none text-base sm:text-sm min-h-[44px]"
               >
                 {loading && (
                   <LoadingSpinner size="sm" className="border-black border-t-transparent" />

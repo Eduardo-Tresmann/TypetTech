@@ -92,18 +92,18 @@ const AuthForm: React.FC<Props> = ({ mode }) => {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto">
-      <div className="bg-[#2b2d2f] rounded-xl border border-[#3a3c3f] p-8 text-white shadow-xl">
+    <div className="w-full max-w-md mx-auto px-4 sm:px-0">
+      <div className="bg-[#2b2d2f] rounded-xl border border-[#3a3c3f] p-6 sm:p-8 text-white shadow-xl">
         <div className="mb-6">
-          <h1 className="text-white text-2xl font-bold mb-2">
+          <h1 className="text-white text-xl sm:text-2xl font-bold mb-2">
             {mode === 'login' ? 'Entrar' : 'Criar conta'}
           </h1>
-          <p className="text-[#d1d1d1] text-sm">
+          <p className="text-[#d1d1d1] text-xs sm:text-sm">
             {mode === 'login' ? 'Acesse sua conta para continuar' : 'Crie sua conta para começar'}
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-3">
           <div>
             <label className="block text-[#d1d1d1] text-sm font-medium mb-1.5">E-mail</label>
             <input
@@ -114,7 +114,7 @@ const AuthForm: React.FC<Props> = ({ mode }) => {
                 emailRef.current?.setCustomValidity('');
                 setEmail(normalizeEmail(e.target.value));
               }}
-              className="w-full p-3.5 rounded-lg bg-[#1f2022] text-white outline-none border border-[#3a3c3f] focus:border-[#e2b714] focus:ring-2 focus:ring-[#e2b714]/20 transition-all text-sm"
+              className="w-full p-3 sm:p-3.5 rounded-lg bg-[#1f2022] text-white outline-none border border-[#3a3c3f] focus:border-[#e2b714] focus:ring-2 focus:ring-[#e2b714]/20 transition-all text-base sm:text-sm"
               required
               ref={emailRef}
             />
@@ -131,7 +131,7 @@ const AuthForm: React.FC<Props> = ({ mode }) => {
                   passwordRef.current?.setCustomValidity('');
                   setPassword(e.target.value);
                 }}
-                className="w-full p-3.5 rounded-lg bg-[#1f2022] text-white outline-none border border-[#3a3c3f] focus:border-[#e2b714] focus:ring-2 focus:ring-[#e2b714]/20 transition-all pr-12 text-sm"
+                className="w-full p-3 sm:p-3.5 rounded-lg bg-[#1f2022] text-white outline-none border border-[#3a3c3f] focus:border-[#e2b714] focus:ring-2 focus:ring-[#e2b714]/20 transition-all pr-12 text-base sm:text-sm"
                 required
                 ref={passwordRef}
               />
@@ -140,7 +140,7 @@ const AuthForm: React.FC<Props> = ({ mode }) => {
                 aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
                 onClick={() => setShowPassword(v => !v)}
                 tabIndex={-1}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#d1d1d1] hover:text-white transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#d1d1d1] hover:text-white transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
               >
                 {showPassword ? (
                   <svg
@@ -195,7 +195,7 @@ const AuthForm: React.FC<Props> = ({ mode }) => {
                     confirmRef.current?.setCustomValidity('');
                     setConfirmPassword(e.target.value);
                   }}
-                  className="w-full p-3.5 rounded-lg bg-[#1f2022] text-white outline-none border border-[#3a3c3f] focus:border-[#e2b714] focus:ring-2 focus:ring-[#e2b714]/20 transition-all pr-12 text-sm"
+                  className="w-full p-3 sm:p-3.5 rounded-lg bg-[#1f2022] text-white outline-none border border-[#3a3c3f] focus:border-[#e2b714] focus:ring-2 focus:ring-[#e2b714]/20 transition-all pr-12 text-base sm:text-sm"
                   required
                   ref={confirmRef}
                 />
@@ -204,7 +204,7 @@ const AuthForm: React.FC<Props> = ({ mode }) => {
                   aria-label={showConfirm ? 'Ocultar confirmação' : 'Mostrar confirmação'}
                   onClick={() => setShowConfirm(v => !v)}
                   tabIndex={-1}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#d1d1d1] hover:text-white transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#d1d1d1] hover:text-white transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
                 >
                   {showConfirm ? (
                     <svg
@@ -287,7 +287,7 @@ const AuthForm: React.FC<Props> = ({ mode }) => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 px-6 bg-[#e2b714] text-black rounded-lg hover:bg-[#d4c013] transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed font-semibold shadow-lg hover:shadow-xl disabled:shadow-none text-sm"
+            className="w-full py-3.5 sm:py-3 px-6 bg-[#e2b714] text-black rounded-lg hover:bg-[#d4c013] transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed font-semibold shadow-lg hover:shadow-xl disabled:shadow-none text-base sm:text-sm min-h-[44px]"
           >
             {loading && <LoadingSpinner size="sm" className="border-black border-t-transparent" />}
             {loading ? 'Carregando...' : mode === 'login' ? 'Entrar' : 'Criar conta'}
@@ -295,7 +295,7 @@ const AuthForm: React.FC<Props> = ({ mode }) => {
         </form>
 
         <div className="mt-6 pt-5 border-t border-[#3a3c3f] text-center">
-          <p className="text-[#d1d1d1] text-sm">
+          <p className="text-[#d1d1d1] text-xs sm:text-sm">
             {mode === 'login' ? (
               <>
                 Não tem conta?{' '}

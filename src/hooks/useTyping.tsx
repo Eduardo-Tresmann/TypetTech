@@ -269,9 +269,23 @@ export const useTypingTest = (): {
     }
   }, [isFinished, userInput, text, totalTime]);
 
+  const lastProcessedKeyRef = useRef<{ key: string; time: number } | null>(null);
+
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (isFinished || !isWindowFocused) return;
+
+      const now = Date.now();
+      const lastProcessed = lastProcessedKeyRef.current;
+      
+      // Prevenir processamento duplicado: mesma tecla em menos de 50ms
+      if (lastProcessed && 
+          lastProcessed.key === e.key && 
+          (now - lastProcessed.time) < 50) {
+        return;
+      }
+      
+      lastProcessedKeyRef.current = { key: e.key, time: now };
 
       if (!isActive && e.key.length === 1) {
         setIsActive(true);
@@ -293,11 +307,10 @@ export const useTypingTest = (): {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
 
-  const resetTest = () => {
-    setText(generateText(350));
+  const resetTest = useCallback(() => {
+    // Limpa todos os estados primeiro
     setUserInput('');
     setCurrentIndex(0);
-    setTimeLeft(totalTime);
     setIsActive(false);
     setWpm(0);
     setAccuracy(100);
@@ -305,11 +318,22 @@ export const useTypingTest = (): {
     setCorrectLetters(0);
     setIncorrectLetters(0);
     setViewStartLine(0);
-    setResetKey(prev => prev + 1);
     setIsNewRecord(false);
     setRecordInfo(null);
-    containerRef.current?.focus();
-  };
+    setTimeLeft(totalTime);
+    
+    // Gera novo texto após limpar estados
+    const newText = generateText(350);
+    setText(newText);
+    
+    // Incrementa resetKey para forçar re-render completo
+    setResetKey(prev => prev + 1);
+    
+    // Foca o container após um pequeno delay
+    setTimeout(() => {
+      containerRef.current?.focus();
+    }, 0);
+  }, [totalTime]);
 
   useEffect(() => {
     const onGlobalReset = () => resetTest();

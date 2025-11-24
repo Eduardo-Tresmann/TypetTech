@@ -12,7 +12,6 @@ type ProfileFormProps = {
   onDisplayNameChange: (name: string) => void;
   onAvatarFileSelect: (file: File) => void;
   onSave: () => void;
-  onSignOut: () => void;
   saving: boolean;
   loading: boolean;
   error: string | null;
@@ -28,15 +27,14 @@ export default function ProfileForm({
   onDisplayNameChange,
   onAvatarFileSelect,
   onSave,
-  onSignOut,
   saving,
   loading,
   error,
   info,
 }: ProfileFormProps) {
   return (
-    <div className="bg-[#2b2d2f] rounded-xl border border-[#3a3c3f] p-6 text-white shadow-xl">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div className="bg-[#2b2d2f] rounded-xl border border-[#3a3c3f] p-4 sm:p-6 text-white shadow-xl">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
         {/* Coluna esquerda - Avatar */}
         <div className="md:col-span-1 flex flex-col items-center justify-center">
           <div className="relative mb-4">
@@ -44,15 +42,15 @@ export default function ProfileForm({
               <img
                 src={avatarFile ? URL.createObjectURL(avatarFile) : avatarUrl!}
                 alt="avatar"
-                className="w-28 h-28 rounded-full object-cover border-4 border-[#e2b714] shadow-lg mx-auto"
+                className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-full object-cover border-4 border-[#e2b714] shadow-lg mx-auto max-w-full h-auto"
               />
             ) : (
-              <div className="w-28 h-28 rounded-full bg-[#e2b714] text-black flex items-center justify-center text-3xl font-bold border-4 border-[#e2b714] shadow-lg mx-auto">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-full bg-[#e2b714] text-black flex items-center justify-center text-xl sm:text-2xl md:text-3xl font-bold border-4 border-[#e2b714] shadow-lg mx-auto">
                 {getInitials(displayName, defaultName || 'US')}
               </div>
             )}
           </div>
-          <h2 className="text-lg font-semibold mb-2 text-center w-full">
+          <h2 className="text-base sm:text-lg font-semibold mb-2 text-center w-full">
             {displayName || defaultName || 'Usuário'}
           </h2>
           <p className="text-[#d1d1d1] text-xs text-center break-words w-full px-2">{email}</p>
@@ -77,7 +75,7 @@ export default function ProfileForm({
               type="text"
               value={displayName ?? ''}
               onChange={e => onDisplayNameChange(e.target.value)}
-              className="w-full p-3.5 rounded-lg bg-[#1f2022] text-white outline-none border border-[#3a3c3f] focus:border-[#e2b714] focus:ring-2 focus:ring-[#e2b714]/20 transition-all text-sm"
+              className="w-full p-3 sm:p-3.5 rounded-lg bg-[#1f2022] text-white outline-none border border-[#3a3c3f] focus:border-[#e2b714] focus:ring-2 focus:ring-[#e2b714]/20 transition-all text-base sm:text-sm"
               maxLength={24}
               placeholder={defaultName}
             />
@@ -99,7 +97,7 @@ export default function ProfileForm({
                     onAvatarFileSelect(f);
                   }
                 }}
-                className="w-full p-3.5 rounded-lg bg-[#1f2022] text-white outline-none border border-[#3a3c3f] focus:border-[#e2b714] focus:ring-2 focus:ring-[#e2b714]/20 transition-all file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#e2b714] file:text-black file:cursor-pointer hover:file:bg-[#d4c013] file:transition-colors text-sm"
+                className="w-full p-3 sm:p-3.5 rounded-lg bg-[#1f2022] text-white outline-none border border-[#3a3c3f] focus:border-[#e2b714] focus:ring-2 focus:ring-[#e2b714]/20 transition-all file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#e2b714] file:text-black file:cursor-pointer hover:file:bg-[#d4c013] file:transition-colors text-base sm:text-sm"
               />
             </div>
             {avatarFile && (
@@ -107,7 +105,7 @@ export default function ProfileForm({
                 <img
                   src={URL.createObjectURL(avatarFile)}
                   alt="preview"
-                  className="w-14 h-14 rounded-full object-cover border-2 border-[#e2b714]"
+                  className="w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover border-2 border-[#e2b714] max-w-full h-auto"
                 />
                 <div className="flex-1 min-w-0">
                   <p className="text-xs text-white font-medium truncate">Nova foto selecionada</p>
@@ -158,15 +156,9 @@ export default function ProfileForm({
           {/* Botão de salvar */}
           <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#3a3c3f] mt-2">
             <button
-              onClick={onSignOut}
-              className="px-5 py-2 text-sm text-[#d1d1d1] hover:text-white transition-colors"
-            >
-              Sair
-            </button>
-            <button
               onClick={onSave}
               disabled={saving || loading}
-              className="px-6 py-2.5 bg-[#e2b714] text-black rounded-lg hover:bg-[#d4c013] transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed font-semibold shadow-lg hover:shadow-xl disabled:shadow-none text-sm"
+              className="w-full sm:w-auto px-6 py-3 sm:py-2.5 bg-[#e2b714] text-black rounded-lg hover:bg-[#d4c013] transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed font-semibold shadow-lg hover:shadow-xl disabled:shadow-none text-base sm:text-sm min-h-[44px]"
             >
               {saving ? 'Salvando...' : 'Salvar'}
             </button>

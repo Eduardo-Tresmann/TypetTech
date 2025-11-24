@@ -18,6 +18,47 @@ const Header: React.FC = () => {
   );
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const headerRef = useRef<HTMLDivElement | null>(null);
+
+  // Garantir que o header sempre fique visível, mesmo quando o teclado abrir
+  useEffect(() => {
+    const header = headerRef.current;
+    if (!header) return;
+
+    const keepHeaderVisible = () => {
+      if (header) {
+        header.style.position = 'fixed';
+        header.style.top = '0';
+        header.style.left = '0';
+        header.style.right = '0';
+        header.style.zIndex = '99999';
+      }
+    };
+
+    // Verificar periodicamente e quando o viewport mudar
+    const interval = setInterval(keepHeaderVisible, 100);
+
+    // Usar visualViewport API se disponível
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('scroll', keepHeaderVisible);
+      window.visualViewport.addEventListener('resize', keepHeaderVisible);
+    }
+
+    window.addEventListener('scroll', keepHeaderVisible, true);
+    window.addEventListener('resize', keepHeaderVisible);
+
+    keepHeaderVisible();
+
+    return () => {
+      clearInterval(interval);
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('scroll', keepHeaderVisible);
+        window.visualViewport.removeEventListener('resize', keepHeaderVisible);
+      }
+      window.removeEventListener('scroll', keepHeaderVisible, true);
+      window.removeEventListener('resize', keepHeaderVisible);
+    };
+  }, []);
 
   useEffect(() => {
     const load = async () => {
@@ -63,13 +104,29 @@ const Header: React.FC = () => {
   }, [menuOpen]);
 
   return (
-    <div className="fixed top-0 left-0 w-full flex justify-center items-center h-14 bg-[#323437] z-50">
-      <div className="w-full max-w-[110ch] md:max-w-[140ch] lg:max-w-[175ch] xl:max-w-[200ch] 2xl:max-w-[220ch] mx-auto px-10 sm:px-16 md:px-24 lg:px-32 xl:px-40">
-        <div className="grid grid-cols-3 items-center min-w-0">
-          <div className="justify-self-start">
+    <div 
+      ref={headerRef}
+      className="fixed top-0 left-0 right-0 w-full flex justify-center items-center h-14 bg-[#323437] z-[99999]"
+      style={{ 
+        position: 'fixed', 
+        top: 0, 
+        left: 0, 
+        right: 0,
+        bottom: 'auto',
+        zIndex: 99999,
+        transform: 'translateZ(0)',
+        WebkitTransform: 'translateZ(0)',
+        willChange: 'transform',
+        WebkitBackfaceVisibility: 'hidden',
+        backfaceVisibility: 'hidden'
+      }}
+    >
+      <div className="w-full max-w-[110ch] md:max-w-[140ch] lg:max-w-[175ch] xl:max-w-[200ch] 2xl:max-w-[220ch] mx-auto px-3 sm:px-4 md:px-6 lg:px-8 xl:px-12">
+        <div className="flex sm:grid sm:grid-cols-3 items-center justify-between sm:justify-items-center w-full gap-2">
+          <div className="flex-shrink-0 justify-self-start">
             <Link
               href="/home?reset=1"
-              className="flex items-center gap-2 text-white text-3xl font-bold hover:text-[#e2b714] transition-colors"
+              className="flex items-center gap-1 sm:gap-2 text-white text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold hover:text-[#e2b714] transition-colors"
               onClick={e => {
                 try {
                   const isHome =
@@ -83,8 +140,7 @@ const Header: React.FC = () => {
               }}
             >
               <svg
-                width="28"
-                height="28"
+                className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 flex-shrink-0"
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -96,17 +152,16 @@ const Header: React.FC = () => {
                   strokeLinejoin="round"
                 />
               </svg>
-              TypeTech
+              <span className="inline whitespace-nowrap">TypeTech</span>
             </Link>
           </div>
-          <div className="justify-self-center">
+          <div className="hidden sm:flex justify-self-center">
             <Link
               href="/leaderboards"
-              className="flex items-center gap-2 text-white text-lg font-semibold tracking-wide hover:text-[#e2b714] transition-colors"
+              className="flex items-center justify-center text-white hover:text-[#e2b714] transition-colors min-h-[44px] min-w-[44px]"
             >
               <svg
-                width="20"
-                height="20"
+                className="w-5 h-5 sm:w-6 sm:h-6"
                 viewBox="0 0 24 24"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -120,17 +175,37 @@ const Header: React.FC = () => {
                   strokeLinejoin="round"
                 />
               </svg>
-              Leaderboards
+              <span className="ml-1 sm:ml-2 text-base sm:text-lg font-semibold">Leaderboards</span>
             </Link>
           </div>
-          <div className="justify-self-end min-w-0">
+          <div className="flex items-center gap-2 sm:gap-3 md:gap-4 flex-shrink-0 justify-self-end">
+            {/* Leaderboards no mobile - aparece à direita */}
+            <Link
+              href="/leaderboards"
+              className="flex sm:hidden items-center justify-center text-white hover:text-[#e2b714] transition-colors min-h-[44px] min-w-[44px]"
+            >
+              <svg
+                className="w-5 h-5"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M3 18h18" stroke="#e2b714" strokeWidth="2" strokeLinecap="round" />
+                <path
+                  d="M5 18l2-9 5 4 5-7 2 12"
+                  stroke="#e2b714"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </Link>
             {!user ? (
-              <Link href="/auth/login" className="flex items-center gap-3 flex-shrink-0">
-                <span className="text-white hover:underline">Login</span>
-                <div className="w-9 h-9 rounded-full bg-[#6b6e70] flex items-center justify-center flex-shrink-0">
+              <Link href="/auth/login" className="flex items-center gap-1 sm:gap-2 flex-shrink-0 min-h-[44px]">
+                <span className="text-white hover:underline text-sm sm:text-base">Login</span>
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#6b6e70] flex items-center justify-center flex-shrink-0">
                   <svg
-                    width="18"
-                    height="18"
+                    className="w-4 h-4 sm:w-5 sm:h-5"
                     viewBox="0 0 24 24"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
@@ -146,8 +221,10 @@ const Header: React.FC = () => {
                 </div>
               </Link>
             ) : (
-              <div className="flex items-center gap-4 min-w-0">
-                <NotificationBell />
+              <>
+                <div className="flex-shrink-0">
+                  <NotificationBell />
+                </div>
                 <div className="relative min-w-0" ref={menuRef}>
                   <button
                     type="button"
@@ -155,34 +232,33 @@ const Header: React.FC = () => {
                       e.stopPropagation();
                       setMenuOpen(v => !v);
                     }}
-                    className="group flex items-center gap-3 min-w-0 max-w-full cursor-pointer hover:opacity-90 transition-all px-2 py-1.5 rounded-lg hover:bg-[#2b2d2f]/50"
+                    className="group flex items-center gap-2 sm:gap-3 min-w-0 max-w-full cursor-pointer hover:opacity-90 transition-all px-2 py-1.5 rounded-lg hover:bg-[#2b2d2f]/50 min-h-[44px]"
                   >
-                    <span className="text-white font-medium truncate max-w-[150px] sm:max-w-[200px] md:max-w-[250px] block pointer-events-none text-sm group-hover:text-[#e2b714] transition-colors">
+                    <span className="text-white font-medium truncate max-w-[80px] sm:max-w-[100px] md:max-w-[150px] lg:max-w-[200px] xl:max-w-[250px] block pointer-events-none text-xs sm:text-sm group-hover:text-[#e2b714] transition-colors">
                       {displayName ?? (user.email as string).split('@')[0]}
                     </span>
                     {avatarUrl ? (
                       <img
                         src={avatarUrl}
                         alt="avatar"
-                        className="w-10 h-10 rounded-full object-cover flex-shrink-0 pointer-events-none border-2 border-[#e2b714]/30"
+                        className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover flex-shrink-0 pointer-events-none border-2 border-[#e2b714]/30 max-w-full h-auto"
                       />
                     ) : (
-                      <div className="w-10 h-10 rounded-full bg-[#e2b714] text-black flex items-center justify-center font-semibold text-sm flex-shrink-0 pointer-events-none border-2 border-[#e2b714]">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#e2b714] text-black flex items-center justify-center font-semibold text-xs sm:text-sm flex-shrink-0 pointer-events-none border-2 border-[#e2b714]">
                         {initials}
                       </div>
                     )}
                   </button>
                   {menuOpen && (
-                    <div className="absolute right-0 top-full mt-2 z-[100]">
-                      <div className="w-56 bg-[#2b2d2f] text-white rounded-xl shadow-xl p-2 space-y-1 border border-[#3a3c3f]">
+                    <div className="absolute right-0 top-full mt-2 z-[100] w-56 sm:w-64">
+                      <div className="bg-[#2b2d2f] text-white rounded-xl shadow-xl p-2 space-y-1 border border-[#3a3c3f] max-w-[calc(100vw-2rem)]">
                         <Link
                           href="/stats"
                           onClick={() => setMenuOpen(false)}
-                          className="flex items-center gap-2.5 text-[#d1d1d1] hover:text-white hover:bg-[#1f2022] px-3 py-2 rounded-lg transition-colors text-sm"
+                          className="flex items-center gap-2.5 text-[#d1d1d1] hover:text-white hover:bg-[#1f2022] px-3 py-2.5 sm:py-2 rounded-lg transition-colors text-sm min-h-[44px]"
                         >
                           <svg
-                            width="18"
-                            height="18"
+                            className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0"
                             viewBox="0 0 24 24"
                             fill="none"
                             xmlns="http://www.w3.org/2000/svg"
@@ -199,11 +275,10 @@ const Header: React.FC = () => {
                         <Link
                           href="/friends"
                           onClick={() => setMenuOpen(false)}
-                          className="flex items-center gap-2.5 text-[#d1d1d1] hover:text-white hover:bg-[#1f2022] px-3 py-2 rounded-lg transition-colors text-sm"
+                          className="flex items-center gap-2.5 text-[#d1d1d1] hover:text-white hover:bg-[#1f2022] px-3 py-2.5 sm:py-2 rounded-lg transition-colors text-sm min-h-[44px]"
                         >
                           <svg
-                            width="18"
-                            height="18"
+                            className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0"
                             viewBox="0 0 24 24"
                             fill="none"
                             xmlns="http://www.w3.org/2000/svg"
@@ -219,11 +294,10 @@ const Header: React.FC = () => {
                         <Link
                           href="/profile"
                           onClick={() => setMenuOpen(false)}
-                          className="flex items-center gap-2.5 text-[#d1d1d1] hover:text-white hover:bg-[#1f2022] px-3 py-2 rounded-lg transition-colors text-sm"
+                          className="flex items-center gap-2.5 text-[#d1d1d1] hover:text-white hover:bg-[#1f2022] px-3 py-2.5 sm:py-2 rounded-lg transition-colors text-sm min-h-[44px]"
                         >
                           <svg
-                            width="18"
-                            height="18"
+                            className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0"
                             viewBox="0 0 24 24"
                             fill="none"
                             xmlns="http://www.w3.org/2000/svg"
@@ -241,11 +315,10 @@ const Header: React.FC = () => {
                         <Link
                           href="/settings"
                           onClick={() => setMenuOpen(false)}
-                          className="flex items-center gap-2.5 text-[#d1d1d1] hover:text-white hover:bg-[#1f2022] px-3 py-2 rounded-lg transition-colors text-sm"
+                          className="flex items-center gap-2.5 text-[#d1d1d1] hover:text-white hover:bg-[#1f2022] px-3 py-2.5 sm:py-2 rounded-lg transition-colors text-sm min-h-[44px]"
                         >
                           <svg
-                            width="18"
-                            height="18"
+                            className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0"
                             viewBox="0 0 24 24"
                             fill="none"
                             xmlns="http://www.w3.org/2000/svg"
@@ -265,11 +338,10 @@ const Header: React.FC = () => {
                             await signOut();
                             window.location.href = '/home';
                           }}
-                          className="flex w-full items-center gap-2.5 text-left text-[#d1d1d1] hover:text-white hover:bg-[#1f2022] px-3 py-2 rounded-lg transition-colors text-sm"
+                          className="flex w-full items-center gap-2.5 text-left text-[#d1d1d1] hover:text-white hover:bg-[#1f2022] px-3 py-2.5 sm:py-2 rounded-lg transition-colors text-sm min-h-[44px]"
                         >
                           <svg
-                            width="18"
-                            height="18"
+                            className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0"
                             viewBox="0 0 24 24"
                             fill="none"
                             xmlns="http://www.w3.org/2000/svg"
@@ -288,7 +360,7 @@ const Header: React.FC = () => {
                     </div>
                   )}
                 </div>
-              </div>
+              </>
             )}
           </div>
         </div>

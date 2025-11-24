@@ -88,46 +88,46 @@ export default function StatsPage() {
   }, [resultsAll]);
 
   return (
-    <div className="min-h-screen bg-[#323437] flex flex-col items-center justify-start px-6 pb-8">
+    <div className="min-h-screen bg-[#323437] flex flex-col items-center justify-start px-4 sm:px-6 pb-8">
       <div className="w-full max-w-[120ch] text-white mt-14">
-        <div className="space-y-8">
+        <div className="space-y-6 sm:space-y-8">
           <div>
-            <h2 className="text-xl font-semibold text-center mb-6">Estatísticas</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="p-5 rounded-lg border border-[#3a3c3f] bg-[#2b2d2f] min-h-[100px] flex flex-col justify-between">
-                <div className="text-[#d1d1d1] text-sm mb-2">Melhor WPM (geral)</div>
-                <div className="text-yellow-400 text-3xl font-bold leading-none">
+            <h2 className="text-lg sm:text-xl font-semibold text-center mb-4 sm:mb-6">Estatísticas</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+              <div className="p-4 sm:p-5 rounded-lg border border-[#3a3c3f] bg-[#2b2d2f] min-h-[90px] sm:min-h-[100px] flex flex-col justify-between">
+                <div className="text-[#d1d1d1] text-xs sm:text-sm mb-2">Melhor WPM (geral)</div>
+                <div className="text-yellow-400 text-2xl sm:text-3xl font-bold leading-none">
                   {kpis ? kpis.bestOverall.wpm : 0}
                 </div>
               </div>
-              <div className="p-5 rounded-lg border border-[#3a3c3f] bg-[#2b2d2f] min-h-[100px] flex flex-col justify-between">
-                <div className="text-[#d1d1d1] text-sm mb-2">Média WPM</div>
-                <div className="text-yellow-400 text-3xl font-bold leading-none">
+              <div className="p-4 sm:p-5 rounded-lg border border-[#3a3c3f] bg-[#2b2d2f] min-h-[90px] sm:min-h-[100px] flex flex-col justify-between">
+                <div className="text-[#d1d1d1] text-xs sm:text-sm mb-2">Média WPM</div>
+                <div className="text-yellow-400 text-2xl sm:text-3xl font-bold leading-none">
                   {kpis ? kpis.avgWpm : 0}
                 </div>
               </div>
-              <div className="p-5 rounded-lg border border-[#3a3c3f] bg-[#2b2d2f] min-h-[100px] flex flex-col justify-between">
-                <div className="text-[#d1d1d1] text-sm mb-2">Média Precisão</div>
-                <div className="text-yellow-400 text-3xl font-bold leading-none">
+              <div className="p-4 sm:p-5 rounded-lg border border-[#3a3c3f] bg-[#2b2d2f] min-h-[90px] sm:min-h-[100px] flex flex-col justify-between">
+                <div className="text-[#d1d1d1] text-xs sm:text-sm mb-2">Média Precisão</div>
+                <div className="text-yellow-400 text-2xl sm:text-3xl font-bold leading-none">
                   {kpis ? `${kpis.avgAcc}%` : '0%'}
                 </div>
               </div>
-              <div className="p-5 rounded-lg border border-[#3a3c3f] bg-[#2b2d2f] min-h-[100px] flex flex-col justify-between">
-                <div className="text-[#d1d1d1] text-sm mb-2">Testes</div>
-                <div className="text-yellow-400 text-3xl font-bold leading-none">
+              <div className="p-4 sm:p-5 rounded-lg border border-[#3a3c3f] bg-[#2b2d2f] min-h-[90px] sm:min-h-[100px] flex flex-col justify-between">
+                <div className="text-[#d1d1d1] text-xs sm:text-sm mb-2">Testes</div>
+                <div className="text-yellow-400 text-2xl sm:text-3xl font-bold leading-none">
                   {kpis ? kpis.totals.tests : 0}
                 </div>
               </div>
             </div>
             {kpis && (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mt-4">
                 {kpis.bestByTime.map(b => (
                   <div
                     key={b.total_time}
-                    className="p-5 rounded-lg border border-[#3a3c3f] bg-[#2b2d2f] min-h-[100px] flex flex-col justify-between"
+                    className="p-4 sm:p-5 rounded-lg border border-[#3a3c3f] bg-[#2b2d2f] min-h-[90px] sm:min-h-[100px] flex flex-col justify-between"
                   >
-                    <div className="text-[#d1d1d1] text-sm mb-2">Melhor WPM - {b.total_time}s</div>
-                    <div className="text-yellow-400 text-3xl font-bold leading-none">{b.wpm}</div>
+                    <div className="text-[#d1d1d1] text-xs sm:text-sm mb-2">Melhor WPM - {b.total_time}s</div>
+                    <div className="text-yellow-400 text-2xl sm:text-3xl font-bold leading-none">{b.wpm}</div>
                   </div>
                 ))}
               </div>
@@ -135,9 +135,9 @@ export default function StatsPage() {
           </div>
 
           <div>
-            <h2 className="text-xl font-semibold text-center mb-6">Histórico</h2>
+            <h2 className="text-lg sm:text-xl font-semibold text-center mb-4 sm:mb-6">Histórico</h2>
             <div className="mb-4 rounded-xl bg-[#2b2d2f] border border-[#3a3c3f] overflow-hidden">
-              <div className="flex items-center justify-center gap-3 p-3">
+              <div className="flex items-center justify-center gap-2 sm:gap-3 p-3 flex-wrap">
                 {[15, 30, 60, 120].map(t => {
                   const active = durations.includes(t);
                   return (
@@ -147,7 +147,7 @@ export default function StatsPage() {
                         setPage(0);
                         setDurations(prev => (active ? prev.filter(x => x !== t) : [...prev, t]));
                       }}
-                      className={`h-9 px-4 rounded-full text-sm font-medium transition-all ${active ? 'bg-[#e2b714] text-black shadow-lg' : 'text-[#d1d1d1] hover:bg-[#3a3c3f]'}`}
+                      className={`h-9 sm:h-10 px-3 sm:px-4 rounded-full text-xs sm:text-sm font-medium transition-all min-h-[44px] min-w-[44px] ${active ? 'bg-[#e2b714] text-black shadow-lg' : 'text-[#d1d1d1] hover:bg-[#3a3c3f]'}`}
                     >
                       {t}s
                     </button>
@@ -162,10 +162,12 @@ export default function StatsPage() {
               </div>
             )}
             <div className="bg-[#2b2d2f] rounded-lg border border-[#3a3c3f] overflow-hidden">
-              <div
-                className="grid gap-6 px-6 py-3 text-[#d1d1d1] text-sm font-medium border-b border-[#3a3c3f]"
-                style={{ gridTemplateColumns: '3fr 2fr 2fr 2fr 1.5fr 1.5fr' }}
-              >
+              {/* Desktop: Tabela */}
+              <div className="hidden md:block">
+                <div
+                  className="grid gap-4 sm:gap-6 px-4 sm:px-6 py-3 text-[#d1d1d1] text-xs sm:text-sm font-medium border-b border-[#3a3c3f]"
+                  style={{ gridTemplateColumns: '3fr 2fr 2fr 2fr 1.5fr 1.5fr' }}
+                >
                 <button
                   onClick={() => {
                     setPage(0);
@@ -261,28 +263,69 @@ export default function StatsPage() {
                 {resultsFiltered.map(r => (
                   <div
                     key={r.id}
-                    className="grid gap-6 px-6 py-3 items-center hover:bg-[#323437] transition-colors"
+                    className="grid gap-4 sm:gap-6 px-4 sm:px-6 py-3 items-center hover:bg-[#323437] transition-colors"
                     style={{ gridTemplateColumns: '3fr 2fr 2fr 2fr 1.5fr 1.5fr' }}
                   >
-                    <div className="text-[#d1d1d1] text-sm">
+                    <div className="text-[#d1d1d1] text-xs sm:text-sm">
                       {new Date(r.created_at).toLocaleString('pt-BR')}
                     </div>
-                    <div className="text-[#d1d1d1] text-sm">{r.total_time}s</div>
-                    <div className="text-yellow-400 font-semibold text-sm">{r.wpm} WPM</div>
-                    <div className="text-[#d1d1d1] text-sm">{r.accuracy}%</div>
-                    <div className="text-[#d1d1d1] text-sm text-center">{r.correct_letters}</div>
-                    <div className="text-[#d1d1d1] text-sm text-center">{r.incorrect_letters}</div>
+                    <div className="text-[#d1d1d1] text-xs sm:text-sm">{r.total_time}s</div>
+                    <div className="text-yellow-400 font-semibold text-xs sm:text-sm">{r.wpm} WPM</div>
+                    <div className="text-[#d1d1d1] text-xs sm:text-sm">{r.accuracy}%</div>
+                    <div className="text-[#d1d1d1] text-xs sm:text-sm text-center">{r.correct_letters}</div>
+                    <div className="text-[#d1d1d1] text-xs sm:text-sm text-center">{r.incorrect_letters}</div>
                   </div>
                 ))}
                 {!loading && resultsFiltered.length === 0 && (
                   <div className="py-12 px-4 text-center text-[#d1d1d1]">
-                    <div className="text-4xl mb-3">📊</div>
-                    <div className="text-lg font-medium mb-1">Nenhum teste encontrado</div>
-                    <div className="text-sm text-[#6b6e70]">
+                    <div className="text-3xl sm:text-4xl mb-3">📊</div>
+                    <div className="text-base sm:text-lg font-medium mb-1">Nenhum teste encontrado</div>
+                    <div className="text-xs sm:text-sm text-[#6b6e70]">
                       Complete alguns testes para ver seu histórico aqui
                     </div>
                   </div>
                 )}
+              </div>
+              </div>
+
+              {/* Mobile: Cards */}
+              <div className="md:hidden">
+                <div className="divide-y divide-[#3a3c3f]">
+                  {resultsFiltered.map(r => (
+                    <div
+                      key={r.id}
+                      className="p-4 hover:bg-[#323437] transition-colors"
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="text-yellow-400 font-semibold text-lg">{r.wpm} WPM</div>
+                        <div className="text-[#d1d1d1] text-sm">{r.total_time}s</div>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 text-xs text-[#d1d1d1] mb-2">
+                        <div>
+                          <span className="text-[#6b6e70]">Precisão:</span> {r.accuracy}%
+                        </div>
+                        <div>
+                          <span className="text-[#6b6e70]">Acertos:</span> {r.correct_letters}
+                        </div>
+                        <div>
+                          <span className="text-[#6b6e70]">Erros:</span> {r.incorrect_letters}
+                        </div>
+                      </div>
+                      <div className="text-xs text-[#6b6e70]">
+                        {new Date(r.created_at).toLocaleString('pt-BR')}
+                      </div>
+                    </div>
+                  ))}
+                  {!loading && resultsFiltered.length === 0 && (
+                    <div className="py-12 px-4 text-center text-[#d1d1d1]">
+                      <div className="text-3xl mb-3">📊</div>
+                      <div className="text-base font-medium mb-1">Nenhum teste encontrado</div>
+                      <div className="text-xs text-[#6b6e70]">
+                        Complete alguns testes para ver seu histórico aqui
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
             {totalCount > limit && (
@@ -290,7 +333,7 @@ export default function StatsPage() {
                 <button
                   onClick={() => setPage(0)}
                   disabled={page === 0}
-                  className={`px-3 py-1 rounded text-sm transition-colors ${
+                  className={`px-3 py-2 sm:py-1 rounded text-xs sm:text-sm transition-colors min-h-[44px] ${
                     page === 0
                       ? 'bg-[#292b2e] text-[#6b6e70] cursor-not-allowed'
                       : 'bg-[#3a3c3f] text-[#d1d1d1] hover:bg-[#2b2d2f]'
@@ -301,7 +344,7 @@ export default function StatsPage() {
                 <button
                   onClick={() => setPage(p => Math.max(0, p - 1))}
                   disabled={page === 0}
-                  className={`px-3 py-1 rounded text-sm transition-colors ${
+                  className={`px-3 py-2 sm:py-1 rounded text-xs sm:text-sm transition-colors min-h-[44px] ${
                     page === 0
                       ? 'bg-[#292b2e] text-[#6b6e70] cursor-not-allowed'
                       : 'bg-[#3a3c3f] text-[#d1d1d1] hover:bg-[#2b2d2f]'
@@ -326,7 +369,7 @@ export default function StatsPage() {
                         {showEllipsisBefore && <span className="px-2 text-[#6b6e70]">...</span>}
                         <button
                           onClick={() => setPage(p)}
-                          className={`px-3 py-1 rounded text-sm transition-colors ${
+                          className={`px-3 py-2 sm:py-1 rounded text-xs sm:text-sm transition-colors min-h-[44px] min-w-[44px] ${
                             page === p
                               ? 'bg-[#e2b714] text-black font-semibold'
                               : 'bg-[#3a3c3f] text-[#d1d1d1] hover:bg-[#2b2d2f]'
@@ -341,7 +384,7 @@ export default function StatsPage() {
                 <button
                   onClick={() => setPage(p => Math.min(Math.ceil(totalCount / limit) - 1, p + 1))}
                   disabled={page >= Math.ceil(totalCount / limit) - 1}
-                  className={`px-3 py-1 rounded text-sm transition-colors ${
+                  className={`px-3 py-2 sm:py-1 rounded text-xs sm:text-sm transition-colors min-h-[44px] ${
                     page >= Math.ceil(totalCount / limit) - 1
                       ? 'bg-[#292b2e] text-[#6b6e70] cursor-not-allowed'
                       : 'bg-[#3a3c3f] text-[#d1d1d1] hover:bg-[#2b2d2f]'
@@ -352,7 +395,7 @@ export default function StatsPage() {
                 <button
                   onClick={() => setPage(Math.ceil(totalCount / limit) - 1)}
                   disabled={page >= Math.ceil(totalCount / limit) - 1}
-                  className={`px-3 py-1 rounded text-sm transition-colors ${
+                  className={`px-3 py-2 sm:py-1 rounded text-xs sm:text-sm transition-colors min-h-[44px] ${
                     page >= Math.ceil(totalCount / limit) - 1
                       ? 'bg-[#292b2e] text-[#6b6e70] cursor-not-allowed'
                       : 'bg-[#3a3c3f] text-[#d1d1d1] hover:bg-[#2b2d2f]'

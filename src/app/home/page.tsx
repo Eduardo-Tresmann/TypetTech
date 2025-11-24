@@ -37,14 +37,16 @@ export default function TypingTest() {
   const hasInitialAnimationRef = useRef(false);
   const [showRecordNotification, setShowRecordNotification] = useState(false);
   const prevIsNewRecordRef = useRef(false);
+  const resetTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isResettingRef = useRef(false);
 
   useEffect(() => {
     if (resetParam === '1' && !hasResetRef.current) {
       hasResetRef.current = true;
-      resetTest();
+      resetTestWithAnimation();
       router.replace('/home');
     }
-  }, [resetParam, resetTest, router]);
+  }, [resetParam, router]);
 
   // Animação inicial ao carregar a página
   useEffect(() => {
@@ -64,6 +66,18 @@ export default function TypingTest() {
 
   // Função wrapper para reset com animação
   const resetTestWithAnimation = () => {
+    // Prevenir múltiplos resets simultâneos
+    if (isResettingRef.current) {
+      return;
+    }
+    
+    isResettingRef.current = true;
+    
+    // Cancela qualquer timeout pendente
+    if (resetTimeoutRef.current) {
+      clearTimeout(resetTimeoutRef.current);
+    }
+
     // Congela o conteúdo atual antes do fade out
     setFrozenContent(renderText());
 
@@ -71,18 +85,21 @@ export default function TypingTest() {
     setIsAnimating(true);
 
     // Aguarda o fade out completar (200ms)
-    setTimeout(() => {
+    resetTimeoutRef.current = setTimeout(() => {
+      // Limpa o conteúdo congelado primeiro
+      setFrozenContent(null);
+      
       // Troca o texto enquanto está invisível
       resetTest();
 
-      // Limpa o conteúdo congelado e permite renderizar o novo
-      setFrozenContent(null);
-
-      // Aguarda um frame para garantir que o novo texto foi renderizado
+      // Aguarda frames para garantir que o novo texto foi renderizado
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-          // Fade in com o novo texto
-          setIsAnimating(false);
+          requestAnimationFrame(() => {
+            // Fade in com o novo texto
+            setIsAnimating(false);
+            isResettingRef.current = false;
+          });
         });
       });
     }, 200); // Tempo da animação de fade
@@ -103,8 +120,98 @@ export default function TypingTest() {
     prevIsNewRecordRef.current = isNewRecord;
   }, [isNewRecord, recordInfo]);
 
+  // Ajustar altura quando o teclado abrir no mobile
+  const [viewportHeight, setViewportHeight] = useState<number | null>(null);
+  const mainContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const updateViewportHeight = () => {
+      if (window.visualViewport) {
+        // Usar visualViewport.height quando disponível (detecta teclado)
+        setViewportHeight(window.visualViewport.height);
+      } else {
+        // Fallback para window.innerHeight
+        setViewportHeight(window.innerHeight);
+      }
+    };
+
+    updateViewportHeight();
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', updateViewportHeight);
+      window.visualViewport.addEventListener('scroll', updateViewportHeight);
+    } else {
+      window.addEventListener('resize', updateViewportHeight);
+    }
+
+    return () => {
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', updateViewportHeight);
+        window.visualViewport.removeEventListener('scroll', updateViewportHeight);
+      } else {
+        window.removeEventListener('resize', updateViewportHeight);
+      }
+    };
+  }, []);
+
+  // Desativar scroll na página home
+  useEffect(() => {
+    // Desativar scroll no body
+    const originalStyle = window.getComputedStyle(document.body).overflow;
+    const originalHtmlStyle = window.getComputedStyle(document.documentElement).overflow;
+    
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.height = '100vh';
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
+    
+    // Prevenir scroll com touch no mobile
+    const preventScroll = (e: TouchEvent) => {
+      // Permitir scroll apenas em elementos específicos se necessário
+      const target = e.target as HTMLElement;
+      if (target.closest('[data-allow-scroll]')) {
+        return;
+      }
+      e.preventDefault();
+    };
+    
+    document.addEventListener('touchmove', preventScroll, { passive: false });
+    document.addEventListener('wheel', (e) => {
+      e.preventDefault();
+    }, { passive: false });
+    
+    return () => {
+      document.body.style.overflow = originalStyle;
+      document.documentElement.style.overflow = originalHtmlStyle;
+      document.body.style.height = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.removeEventListener('touchmove', preventScroll);
+      document.removeEventListener('wheel', (e) => {
+        e.preventDefault();
+      });
+    };
+  }, []);
+
+  // Calcular altura do container considerando o teclado
+  const containerHeight = viewportHeight 
+    ? `${viewportHeight}px` 
+    : 'calc(100vh - 56px)';
+
   return (
-    <div className="min-h-screen bg-[#323437] flex flex-col overflow-hidden relative">
+    <div 
+      ref={mainContainerRef}
+      className="bg-[#323437] flex flex-col overflow-hidden relative" 
+      style={{ 
+        paddingTop: '56px',
+        height: containerHeight,
+        minHeight: containerHeight,
+        maxHeight: containerHeight,
+        touchAction: 'none',
+        overscrollBehavior: 'none'
+      }}
+    >
       {/* Notificação de recorde */}
       {showRecordNotification && isNewRecord && recordInfo && (
         <RecordNotification
@@ -117,14 +224,16 @@ export default function TypingTest() {
       )}
 
       {!isFinished ? (
-        <div className="flex-1 flex items-center justify-center">
-          <div className="flex flex-col items-center w-full">
+        <div className="flex-1 flex items-center justify-center overflow-hidden" style={{ touchAction: 'none', overscrollBehavior: 'none', height: '100%' }}>
+          <div className="flex flex-col items-center justify-center w-full overflow-hidden" style={{ gap: '1rem', transform: 'translateY(-20%)', margin: 0, padding: 0 }}>
             <div
-              className={`w-full mx-auto px-10 sm:px-16 md:px-24 lg:px-32 xl:px-40 2xl:px-48 transition-opacity duration-200 ease-in-out ${isAnimating ? 'opacity-0' : 'opacity-100'}`}
+              className={`w-full mx-auto px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20 transition-opacity duration-200 ease-in-out ${isAnimating ? 'opacity-0' : 'opacity-100'}`}
+              style={{ margin: 0 }}
             >
               <ModeBar totalTime={totalTime} onSelectTime={setTotalTime} disableTab />
             </div>
             <TypingDisplay
+              key={`typing-display-${resetKey}`}
               timeLeft={timeLeft}
               renderText={frozenContent !== null ? () => frozenContent : renderText}
               isWindowFocused={isWindowFocused}
@@ -136,7 +245,7 @@ export default function TypingTest() {
           </div>
         </div>
       ) : (
-        <div className="absolute inset-0 flex items-center justify-center z-0">
+        <div className="absolute inset-0 flex items-center justify-center z-0 overflow-hidden" style={{ touchAction: 'none', overscrollBehavior: 'none' }}>
           <ResultsScreen
             key={resetKey}
             wpm={wpm}

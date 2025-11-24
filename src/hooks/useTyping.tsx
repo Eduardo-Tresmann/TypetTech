@@ -75,9 +75,20 @@ export const useTypingTest = (): {
       }
     };
 
+    // Ouvir evento de inicialização de áudio (para mobile)
+    const handleAudioInitialized = () => {
+      if (soundServiceRef.current) {
+        soundServiceRef.current.initialize().catch(() => {
+          // Silenciosamente falhar
+        });
+      }
+    };
+
     window.addEventListener('typetech:configUpdated', handleConfigUpdate);
+    window.addEventListener('typetech:audioInitialized', handleAudioInitialized);
     return () => {
       window.removeEventListener('typetech:configUpdated', handleConfigUpdate);
+      window.removeEventListener('typetech:audioInitialized', handleAudioInitialized);
     };
   }, []);
 

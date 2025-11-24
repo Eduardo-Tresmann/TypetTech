@@ -5,6 +5,7 @@ import { AuthProvider } from '@/context/AuthContext';
 import { GameConfigProvider } from '@/context/GameConfigContext';
 import Header from '@/components/layout/Header';
 import ScrollRestorer from '@/components/layout/ScrollRestorer';
+import AudioInitializer from '@/components/layout/AudioInitializer';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -39,6 +40,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <AuthProvider>
           <GameConfigProvider>
+            <AudioInitializer />
             <ScrollRestorer />
             <Header />
             {children}

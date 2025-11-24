@@ -127,6 +127,7 @@ export default function ChatWindow({
     if (!isOpen) {
       setViewportHeight(null);
       // Restaurar scroll da página quando fechar o chat
+      // Limpar todos os estilos inline que podem estar bloqueando
       document.body.style.overflow = '';
       document.body.style.position = '';
       document.body.style.height = '';
@@ -136,11 +137,32 @@ export default function ChatWindow({
       document.body.style.right = '';
       document.documentElement.style.overflow = '';
       document.documentElement.style.height = '';
+      
       // Restaurar posição de scroll se foi salva
       if (document.body.dataset.scrollY) {
-        window.scrollTo(0, parseInt(document.body.dataset.scrollY));
+        const scrollY = parseInt(document.body.dataset.scrollY);
         delete document.body.dataset.scrollY;
+        // Usar requestAnimationFrame para garantir que os estilos foram aplicados
+        requestAnimationFrame(() => {
+          window.scrollTo(0, scrollY);
+        });
       }
+      
+      // Garantir que o scroll seja restaurado após um pequeno delay
+      setTimeout(() => {
+        if (!document.body.classList.contains('home-page')) {
+          document.body.style.overflow = '';
+          document.body.style.position = '';
+          document.body.style.height = '';
+          document.body.style.width = '';
+          document.body.style.top = '';
+          document.body.style.left = '';
+          document.body.style.right = '';
+          document.documentElement.style.overflow = '';
+          document.documentElement.style.height = '';
+        }
+      }, 100);
+      
       return;
     }
 
@@ -259,7 +281,7 @@ export default function ChatWindow({
       const originalScrollTo = window.scrollTo.bind(window);
       const originalScrollBy = window.scrollBy.bind(window);
       
-      (window as any).scrollTo = function(x?: number | ScrollToOptions, y?: number) {
+      const customScrollTo = function(x?: number | ScrollToOptions, y?: number) {
         if (scrollBlocked) {
           // Sempre forçar para o topo quando bloqueado
           originalScrollTo(0, 0);
@@ -272,7 +294,7 @@ export default function ChatWindow({
         }
       };
       
-      (window as any).scrollBy = function(x?: number | ScrollToOptions, y?: number) {
+      const customScrollBy = function(x?: number | ScrollToOptions, y?: number) {
         if (scrollBlocked) {
           // Sempre forçar para o topo quando bloqueado
           originalScrollTo(0, 0);
@@ -284,9 +306,13 @@ export default function ChatWindow({
           originalScrollBy(x ?? 0, y ?? 0);
         }
       };
+      
+      (window as any).scrollTo = customScrollTo;
+      (window as any).scrollBy = customScrollBy;
 
       return () => {
         clearTimeout(timeoutId);
+        clearInterval(forceTopInterval);
         scrollBlocked = false;
         
         // Remover listener do visualViewport
@@ -299,18 +325,36 @@ export default function ChatWindow({
         (window as any).scrollTo = originalScrollTo;
         (window as any).scrollBy = originalScrollBy;
         
-        document.body.style.overflow = originalBodyOverflow;
-        document.body.style.position = originalBodyPosition;
-        document.body.style.height = originalBodyHeight;
-        document.body.style.width = originalBodyWidth;
-        document.body.style.top = originalBodyTop;
-        document.body.style.left = originalBodyLeft;
-        document.body.style.right = originalBodyRight;
-        document.documentElement.style.overflow = originalHtmlOverflow;
-        document.documentElement.style.height = originalHtmlHeight;
+        // Restaurar estilos do body e html
+        document.body.style.overflow = originalBodyOverflow || '';
+        document.body.style.position = originalBodyPosition || '';
+        document.body.style.height = originalBodyHeight || '';
+        document.body.style.width = originalBodyWidth || '';
+        document.body.style.top = originalBodyTop || '';
+        document.body.style.left = originalBodyLeft || '';
+        document.body.style.right = originalBodyRight || '';
+        document.documentElement.style.overflow = originalHtmlOverflow || '';
+        document.documentElement.style.height = originalHtmlHeight || '';
+        
+        // Remover event listeners
         document.removeEventListener('touchmove', preventScroll);
         document.removeEventListener('wheel', preventWheel);
         document.removeEventListener('scroll', preventScrollEvent, { capture: true });
+        
+        // Forçar restauração do scroll após um pequeno delay para garantir
+        setTimeout(() => {
+          if (!document.body.classList.contains('home-page')) {
+            document.body.style.overflow = '';
+            document.body.style.position = '';
+            document.body.style.height = '';
+            document.body.style.width = '';
+            document.body.style.top = '';
+            document.body.style.left = '';
+            document.body.style.right = '';
+            document.documentElement.style.overflow = '';
+            document.documentElement.style.height = '';
+          }
+        }, 50);
       };
     }
   }, [isOpen, isMobile]);

@@ -6,6 +6,7 @@ import { getSupabase, hasSupabaseConfig } from '@/lib/supabaseClient';
 import { translateError } from '@/lib/errorMessages';
 import { pairKey } from '@/lib/db';
 import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import ChatWindow from '@/components/chat/ChatWindow';
 import FriendsList from '@/components/friends/FriendsList';
 import InvitesList from '@/components/friends/InvitesList';
@@ -589,7 +590,12 @@ export default function FriendsPage() {
   return (
     <div className="min-h-screen bg-[#323437] flex items-center justify-center px-6 sm:px-10 md:px-16 lg:px-24 xl:px-32" style={{ paddingTop: '56px', minHeight: 'calc(100vh - 56px)' }}>
       <div className="w-full max-w-[120ch]">
-        <h1 className="text-white text-3xl font-bold mb-6">Amigos</h1>
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
+          <h1 className="text-white text-3xl font-bold">Amigos</h1>
+          <Link href="/home" className="text-[#e2b714] text-sm sm:text-base">
+            Voltar
+          </Link>
+        </div>
         <div className="rounded-xl bg-[#2b2d2f] border border-[#3a3c3f] p-4 text-white relative">
           <div
             role="tablist"

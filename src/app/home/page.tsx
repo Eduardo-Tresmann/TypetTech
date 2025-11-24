@@ -157,18 +157,19 @@ export default function TypingTest() {
   // Desativar scroll na página home
   useEffect(() => {
     // Desativar scroll no body apenas na página home
-    const originalBodyOverflow = window.getComputedStyle(document.body).overflow;
-    const originalHtmlOverflow = window.getComputedStyle(document.documentElement).overflow;
+    const originalBodyOverflow = document.body.style.overflow;
+    const originalHtmlOverflow = document.documentElement.style.overflow;
     const originalBodyHeight = document.body.style.height;
+    const originalBodyPosition = document.body.style.position;
+    const originalBodyWidth = document.body.style.width;
     const originalHtmlHeight = document.documentElement.style.height;
     
     document.body.style.overflow = 'hidden';
     document.documentElement.style.overflow = 'hidden';
-    document.body.style.height = '100%';
-    document.documentElement.style.height = '100%';
     document.body.style.height = '100vh';
     document.body.style.position = 'fixed';
     document.body.style.width = '100%';
+    document.documentElement.style.height = '100%';
     
     // Prevenir scroll com touch no mobile
     const preventScroll = (e: TouchEvent) => {
@@ -180,10 +181,13 @@ export default function TypingTest() {
       e.preventDefault();
     };
     
-    document.addEventListener('touchmove', preventScroll, { passive: false });
-    document.addEventListener('wheel', (e) => {
+    // Prevenir scroll com wheel
+    const preventWheel = (e: WheelEvent) => {
       e.preventDefault();
-    }, { passive: false });
+    };
+    
+    document.addEventListener('touchmove', preventScroll, { passive: false });
+    document.addEventListener('wheel', preventWheel, { passive: false });
     
     // Adicionar classe para aplicar estilos específicos da página home
     document.body.classList.add('home-page');
@@ -193,10 +197,30 @@ export default function TypingTest() {
       // Remover classe ao sair da página
       document.body.classList.remove('home-page');
       document.documentElement.classList.remove('home-page');
+      
+      // Remover event listeners
       document.removeEventListener('touchmove', preventScroll);
-      document.removeEventListener('wheel', (e) => {
-        e.preventDefault();
-      });
+      document.removeEventListener('wheel', preventWheel);
+      
+      // Restaurar estilos originais
+      document.body.style.overflow = originalBodyOverflow || '';
+      document.body.style.position = originalBodyPosition || '';
+      document.body.style.height = originalBodyHeight || '';
+      document.body.style.width = originalBodyWidth || '';
+      document.documentElement.style.overflow = originalHtmlOverflow || '';
+      document.documentElement.style.height = originalHtmlHeight || '';
+      
+      // Garantir que o scroll seja restaurado após um pequeno delay
+      setTimeout(() => {
+        if (!document.body.classList.contains('home-page')) {
+          document.body.style.overflow = '';
+          document.body.style.position = '';
+          document.body.style.height = '';
+          document.body.style.width = '';
+          document.documentElement.style.overflow = '';
+          document.documentElement.style.height = '';
+        }
+      }, 50);
     };
   }, []);
 

@@ -120,8 +120,13 @@ export default function LeaderboardsPage() {
     <div className="min-h-screen bg-[#323437] flex flex-col items-center justify-start px-4 sm:px-6 pb-8">
       <div className="w-full max-w-[120ch] text-white mt-14">
         <div className="space-y-6 sm:space-y-8">
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
+            <h2 className="text-lg sm:text-xl font-semibold">Leaderboards</h2>
+            <Link href="/home" className="text-[#e2b714] text-sm sm:text-base">
+              Voltar
+            </Link>
+          </div>
           <div>
-            <h2 className="text-lg sm:text-xl font-semibold text-center mb-4 sm:mb-6">Leaderboards</h2>
             <div className="mb-6 w-full flex justify-center">
               <div className="w-full rounded-xl bg-[#2b2d2f] border border-[#3a3c3f] overflow-hidden">
                 <div className="flex items-center justify-center gap-3 p-3">

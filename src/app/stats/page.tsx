@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { fetchUserResults, fetchUserResultsFiltered } from '@/lib/db';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import Link from 'next/link';
 
 type Result = {
   id: string;
@@ -91,8 +92,13 @@ export default function StatsPage() {
     <div className="min-h-screen bg-[#323437] flex flex-col items-center justify-start px-4 sm:px-6 pb-8">
       <div className="w-full max-w-[120ch] text-white mt-14">
         <div className="space-y-6 sm:space-y-8">
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
+            <h2 className="text-lg sm:text-xl font-semibold">Estatísticas</h2>
+            <Link href="/home" className="text-[#e2b714] text-sm sm:text-base">
+              Voltar
+            </Link>
+          </div>
           <div>
-            <h2 className="text-lg sm:text-xl font-semibold text-center mb-4 sm:mb-6">Estatísticas</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
               <div className="p-4 sm:p-5 rounded-lg border border-[#3a3c3f] bg-[#2b2d2f] min-h-[90px] sm:min-h-[100px] flex flex-col justify-between">
                 <div className="text-[#d1d1d1] text-xs sm:text-sm mb-2">Melhor WPM (geral)</div>

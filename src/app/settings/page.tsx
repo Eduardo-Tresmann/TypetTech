@@ -4,6 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { getSupabase, hasSupabaseConfig } from '@/lib/supabaseClient';
 import { translateError } from '@/lib/errorMessages';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import Link from 'next/link';
 
 export default function SettingsPage() {
   const { user } = useAuth();
@@ -51,7 +52,12 @@ export default function SettingsPage() {
     <div className="min-h-screen bg-[#323437] flex items-center justify-center px-4 sm:px-6 py-4 pt-20 sm:pt-4">
       <div className="w-full max-w-md">
         <div className="mb-5">
-          <h1 className="text-white text-xl sm:text-2xl font-bold mb-2">Configurações</h1>
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
+            <h1 className="text-white text-xl sm:text-2xl font-bold">Configurações</h1>
+            <Link href="/home" className="text-[#e2b714] text-sm sm:text-base">
+              Voltar
+            </Link>
+          </div>
           <p className="text-[#d1d1d1] text-xs sm:text-sm">Altere sua senha de acesso</p>
         </div>
 

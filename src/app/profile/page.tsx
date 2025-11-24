@@ -188,13 +188,10 @@ export default function ProfilePage() {
       <div className="w-full max-w-4xl">
         {/* Header compacto */}
         <div className="mb-4 sm:mb-5">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
             <h1 className="text-white text-xl sm:text-2xl font-bold">Perfil</h1>
-            <Link
-              href="/home"
-              className="text-[#d1d1d1] hover:text-white text-sm transition-colors"
-            >
-              ← Voltar
+            <Link href="/home" className="text-[#e2b714] text-sm sm:text-base">
+              Voltar
             </Link>
           </div>
         </div>

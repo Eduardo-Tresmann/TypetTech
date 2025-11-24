@@ -4,6 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import { type UserProfile } from '@/services/UserService';
 import { getInitials } from '@/utils/avatar';
+import { useSound } from '@/hooks/useSound';
 
 type AddFriendFormProps = {
   query: string;
@@ -22,6 +23,7 @@ export default function AddFriendForm({
   onSendInvite,
   loading,
 }: AddFriendFormProps) {
+  const { playClick } = useSound();
   return (
     <div>
       <div className="mb-2 text-[#d1d1d1]">Pesquisar por nome</div>
@@ -59,7 +61,10 @@ export default function AddFriendForm({
               <div className="font-semibold">{r.display_name ?? 'Usuário'}</div>
             </div>
             <button
-              onClick={() => onSendInvite(r.id)}
+              onClick={() => {
+                playClick();
+                onSendInvite(r.id);
+              }}
               className="h-8 px-3 rounded-lg bg-[#e2b714] text-black hover:bg-[#d4c013] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={searching || loading}
             >

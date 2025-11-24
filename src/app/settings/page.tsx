@@ -5,9 +5,19 @@ import { getSupabase, hasSupabaseConfig } from '@/lib/supabaseClient';
 import { translateError } from '@/lib/errorMessages';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import Link from 'next/link';
+import { useGameConfig } from '@/hooks/useGameConfig';
+import { useSound } from '@/hooks/useSound';
+import { SoundService } from '@/core/services/SoundService';
 
 export default function SettingsPage() {
   const { user } = useAuth();
+  const { 
+    config, 
+    setSoundEnabled,
+    setTypingSoundEnabled,
+    setInterfaceSoundEnabled
+  } = useGameConfig();
+  const { playClick } = useSound();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -58,10 +68,95 @@ export default function SettingsPage() {
               Voltar
             </Link>
           </div>
-          <p className="text-[#d1d1d1] text-xs sm:text-sm">Altere sua senha de acesso</p>
+          <p className="text-[#d1d1d1] text-xs sm:text-sm">Gerencie suas preferências e configurações</p>
         </div>
 
+        {/* Seção de Preferências de Jogo */}
+        <div className="bg-[#2b2d2f] rounded-xl border border-[#3a3c3f] p-4 sm:p-6 text-white shadow-xl mb-4">
+          <h2 className="text-white text-lg sm:text-xl font-semibold mb-5 sm:mb-4">Preferências de Áudio</h2>
+          <div className="space-y-0">
+            {/* Som de Digitação */}
+            <button
+              onClick={() => {
+                playClick();
+                setTypingSoundEnabled(!config.typingSoundEnabled);
+              }}
+              className="w-full flex items-center justify-between py-4 sm:py-3 px-0 hover:bg-[#323437]/50 rounded-lg transition-colors active:bg-[#323437]/70 -mx-1 px-1"
+              role="switch"
+              aria-checked={config.typingSoundEnabled}
+              aria-label="Ativar som de digitação"
+            >
+              <div className="flex-1 pr-4">
+                <label className="block text-[#d1d1d1] text-base sm:text-sm font-medium mb-1.5 sm:mb-1 cursor-pointer">
+                  Som de Digitação
+                </label>
+                <p className="text-[#6b6e70] text-xs sm:text-xs leading-relaxed">
+                  Sons ao digitar corretamente ou incorretamente
+                </p>
+              </div>
+              <div className="flex-shrink-0">
+                <div
+                  className={`relative inline-flex h-7 w-12 sm:h-6 sm:w-11 items-center rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#e2b714] focus:ring-offset-2 focus:ring-offset-[#2b2d2f] ${
+                    config.typingSoundEnabled ? 'bg-[#e2b714] shadow-lg shadow-[#e2b714]/30' : 'bg-[#3a3c3f]'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-5 w-5 sm:h-4 sm:w-4 transform rounded-full bg-white transition-all duration-200 shadow-md ${
+                      config.typingSoundEnabled ? 'translate-x-6 sm:translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </div>
+              </div>
+            </button>
+
+            <div className="border-t border-[#3a3c3f] my-1"></div>
+
+            {/* Som de Interface */}
+              <button
+                onClick={() => {
+                  const newValue = !config.interfaceSoundEnabled;
+                  setInterfaceSoundEnabled(newValue);
+                  // Tocar som apenas se estiver ativando (não quando desativando)
+                  if (newValue) {
+                    // Usar setTimeout para garantir que o SoundService foi atualizado pelo contexto
+                    setTimeout(() => {
+                      playClick();
+                    }, 50);
+                  }
+                }}
+              className="w-full flex items-center justify-between py-4 sm:py-3 px-0 hover:bg-[#323437]/50 rounded-lg transition-colors active:bg-[#323437]/70 -mx-1 px-1"
+              role="switch"
+              aria-checked={config.interfaceSoundEnabled}
+              aria-label="Ativar som de interface"
+            >
+              <div className="flex-1 pr-4">
+                <label className="block text-[#d1d1d1] text-base sm:text-sm font-medium mb-1.5 sm:mb-1 cursor-pointer">
+                  Som de Interface
+                </label>
+                <p className="text-[#6b6e70] text-xs sm:text-xs leading-relaxed">
+                  Sons ao clicar em botões, links e menus
+                </p>
+              </div>
+              <div className="flex-shrink-0">
+                <div
+                  className={`relative inline-flex h-7 w-12 sm:h-6 sm:w-11 items-center rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#e2b714] focus:ring-offset-2 focus:ring-offset-[#2b2d2f] ${
+                    config.interfaceSoundEnabled ? 'bg-[#e2b714] shadow-lg shadow-[#e2b714]/30' : 'bg-[#3a3c3f]'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-5 w-5 sm:h-4 sm:w-4 transform rounded-full bg-white transition-all duration-200 shadow-md ${
+                      config.interfaceSoundEnabled ? 'translate-x-6 sm:translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </div>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        {/* Seção de Alteração de Senha */}
         <div className="bg-[#2b2d2f] rounded-xl border border-[#3a3c3f] p-4 sm:p-6 text-white shadow-xl">
+          <h2 className="text-white text-lg sm:text-xl font-semibold mb-4">Alterar Senha</h2>
           <div className="space-y-4 sm:space-y-3">
             <div>
               <label className="block text-[#d1d1d1] text-sm font-medium mb-1.5">Senha atual</label>
@@ -138,7 +233,10 @@ export default function SettingsPage() {
 
             <div className="pt-2">
               <button
-                onClick={handleChangePassword}
+                onClick={() => {
+                  playClick();
+                  handleChangePassword();
+                }}
                 disabled={loading}
                 className="w-full py-3.5 sm:py-3 px-6 bg-[#e2b714] text-black rounded-lg hover:bg-[#d4c013] transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed font-semibold shadow-lg hover:shadow-xl disabled:shadow-none text-base sm:text-sm min-h-[44px]"
               >

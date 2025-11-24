@@ -7,6 +7,7 @@ import { translateError } from '@/lib/errorMessages';
 import { pairKey } from '@/lib/db';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { useSound } from '@/hooks/useSound';
 import ChatWindow from '@/components/chat/ChatWindow';
 import FriendsList from '@/components/friends/FriendsList';
 import InvitesList from '@/components/friends/InvitesList';
@@ -34,6 +35,7 @@ type Message = {
 
 export default function FriendsPage() {
   const { user } = useAuth();
+  const { playClick } = useSound();
   const searchParams = useSearchParams();
   const [tab, setTab] = useState<'friends' | 'invites' | 'add'>('friends');
   const [friends, setFriends] = useState<Friend[]>([]);
@@ -595,7 +597,7 @@ export default function FriendsPage() {
       <div className="w-full max-w-[120ch]">
         <div className="flex items-center justify-between mb-4 sm:mb-6">
           <h1 className="text-white text-3xl font-bold">Amigos</h1>
-          <Link href="/home" className="text-[#e2b714] text-sm sm:text-base">
+          <Link href="/home" className="text-[#e2b714] text-sm sm:text-base" onClick={playClick}>
             Voltar
           </Link>
         </div>
@@ -610,7 +612,10 @@ export default function FriendsPage() {
                 key={t}
                 role="tab"
                 aria-selected={tab === t}
-                onClick={() => setTab(t)}
+                onClick={() => {
+                  playClick();
+                  setTab(t);
+                }}
                 className={`h-9 px-4 rounded-full text-sm transition-colors ${
                   tab === t ? 'bg-[#e2b714] text-black' : 'text-[#d1d1d1] hover:bg-[#1f2022]'
                 }`}

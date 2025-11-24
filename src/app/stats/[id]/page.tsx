@@ -6,6 +6,7 @@ import { fetchUserResults, fetchUserResultsFiltered } from '@/lib/db';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import { useSound } from '@/hooks/useSound';
 
 type Result = {
   id: string;
@@ -20,6 +21,7 @@ type Result = {
 
 export default function StatsUserByIdPage() {
   const { user } = useAuth();
+  const { playClick } = useSound();
   const supabase = useMemo(() => (hasSupabaseConfig() ? getSupabase() : null), []);
   const params = useParams();
   const targetId = String((params as any)?.id ?? '');
@@ -254,7 +256,10 @@ export default function StatsUserByIdPage() {
                   Convite pendente
                 </button>
               ) : (
-                <button onClick={sendInvite} className="px-3 py-1 rounded bg-[#e2b714] text-black">
+                <button onClick={() => {
+                  playClick();
+                  sendInvite();
+                }} className="px-3 py-1 rounded bg-[#e2b714] text-black">
                   Adicionar amigos
                 </button>
               )}

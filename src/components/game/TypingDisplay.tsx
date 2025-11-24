@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react';
+import { useSound } from '@/hooks/useSound';
 
 interface TypingDisplayProps {
   timeLeft: number;
@@ -19,6 +20,7 @@ const TypingDisplay: React.FC<TypingDisplayProps> = ({
   containerRef,
   isAnimating,
 }) => {
+  const { playClick } = useSound();
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -156,6 +158,7 @@ const TypingDisplay: React.FC<TypingDisplayProps> = ({
           <button
             tabIndex={1}
             onClick={e => {
+              playClick();
               resetTest();
               e.currentTarget.blur();
             }}

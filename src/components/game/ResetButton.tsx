@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSound } from '@/hooks/useSound';
 
 interface ResetButtonProps {
   text: string;
@@ -7,7 +8,10 @@ interface ResetButtonProps {
 }
 
 const ResetButton: React.FC<ResetButtonProps> = ({ text, onClick, className = '' }) => {
+  const { playClick } = useSound();
+  
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    playClick();
     onClick();
     e.currentTarget.blur();
   };

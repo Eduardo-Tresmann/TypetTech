@@ -7,9 +7,11 @@ import NotificationBell from '@/components/notifications/NotificationBell';
 import { getCachedDisplayName, getCachedAvatarUrl, setCachedProfile } from '@/utils/storage';
 import { getInitials } from '@/utils/avatar';
 import { fetchProfile } from '@/services/ProfileService';
+import { useSound } from '@/hooks/useSound';
 
 const Header: React.FC = () => {
   const { user, signOut } = useAuth();
+  const { playClick, playMenuToggle } = useSound();
   const [displayName, setDisplayName] = useState<string | null>(getCachedDisplayName);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(getCachedAvatarUrl);
   const initials = getInitials(
@@ -128,6 +130,7 @@ const Header: React.FC = () => {
               href="/home?reset=1"
               className="flex items-center gap-1 sm:gap-2 text-white text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold hover:text-[#e2b714] transition-colors"
               onClick={e => {
+                playClick();
                 try {
                   const isHome =
                     typeof window !== 'undefined' && window.location.pathname.startsWith('/home');
@@ -159,6 +162,7 @@ const Header: React.FC = () => {
             <Link
               href="/leaderboards"
               className="flex items-center justify-center text-white hover:text-[#e2b714] transition-colors min-h-[44px] min-w-[44px]"
+              onClick={playClick}
             >
               <svg
                 className="w-5 h-5 sm:w-6 sm:h-6"
@@ -183,6 +187,7 @@ const Header: React.FC = () => {
             <Link
               href="/leaderboards"
               className="flex sm:hidden items-center justify-center text-white hover:text-[#e2b714] transition-colors min-h-[44px] min-w-[44px]"
+              onClick={playClick}
             >
               <svg
                 className="w-5 h-5"
@@ -201,7 +206,7 @@ const Header: React.FC = () => {
               </svg>
             </Link>
             {!user ? (
-              <Link href="/auth/login" className="flex items-center gap-1 sm:gap-2 flex-shrink-0 min-h-[44px]">
+              <Link href="/auth/login" className="flex items-center gap-1 sm:gap-2 flex-shrink-0 min-h-[44px]" onClick={playClick}>
                 <span className="text-white hover:underline text-sm sm:text-base">Login</span>
                 <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#6b6e70] flex items-center justify-center flex-shrink-0">
                   <svg
@@ -230,6 +235,7 @@ const Header: React.FC = () => {
                     type="button"
                     onClick={e => {
                       e.stopPropagation();
+                      playMenuToggle();
                       setMenuOpen(v => !v);
                     }}
                     className="group flex items-center gap-2 sm:gap-3 min-w-0 max-w-full cursor-pointer hover:opacity-90 transition-all px-2 py-1.5 rounded-lg hover:bg-[#2b2d2f]/50 min-h-[44px]"
@@ -254,7 +260,10 @@ const Header: React.FC = () => {
                       <div className="bg-[#2b2d2f] text-white rounded-xl shadow-xl p-2 space-y-1 border border-[#3a3c3f] max-w-[calc(100vw-2rem)]">
                         <Link
                           href="/stats"
-                          onClick={() => setMenuOpen(false)}
+                          onClick={() => {
+                            playClick();
+                            setMenuOpen(false);
+                          }}
                           className="flex items-center gap-2.5 text-[#d1d1d1] hover:text-white hover:bg-[#1f2022] px-3 py-2.5 sm:py-2 rounded-lg transition-colors text-sm min-h-[44px]"
                         >
                           <svg
@@ -274,7 +283,10 @@ const Header: React.FC = () => {
                         </Link>
                         <Link
                           href="/friends"
-                          onClick={() => setMenuOpen(false)}
+                          onClick={() => {
+                            playClick();
+                            setMenuOpen(false);
+                          }}
                           className="flex items-center gap-2.5 text-[#d1d1d1] hover:text-white hover:bg-[#1f2022] px-3 py-2.5 sm:py-2 rounded-lg transition-colors text-sm min-h-[44px]"
                         >
                           <svg
@@ -293,7 +305,10 @@ const Header: React.FC = () => {
                         </Link>
                         <Link
                           href="/profile"
-                          onClick={() => setMenuOpen(false)}
+                          onClick={() => {
+                            playClick();
+                            setMenuOpen(false);
+                          }}
                           className="flex items-center gap-2.5 text-[#d1d1d1] hover:text-white hover:bg-[#1f2022] px-3 py-2.5 sm:py-2 rounded-lg transition-colors text-sm min-h-[44px]"
                         >
                           <svg
@@ -314,7 +329,10 @@ const Header: React.FC = () => {
                         </Link>
                         <Link
                           href="/settings"
-                          onClick={() => setMenuOpen(false)}
+                          onClick={() => {
+                            playClick();
+                            setMenuOpen(false);
+                          }}
                           className="flex items-center gap-2.5 text-[#d1d1d1] hover:text-white hover:bg-[#1f2022] px-3 py-2.5 sm:py-2 rounded-lg transition-colors text-sm min-h-[44px]"
                         >
                           <svg
@@ -334,6 +352,7 @@ const Header: React.FC = () => {
                         <div className="border-t border-[#3a3c3f] my-1"></div>
                         <button
                           onClick={async () => {
+                            playClick();
                             setMenuOpen(false);
                             await signOut();
                             window.location.href = '/home';

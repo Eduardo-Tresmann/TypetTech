@@ -4,6 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import { type FriendRequest } from '@/services/FriendService';
 import { getInitials } from '@/utils/avatar';
+import { useSound } from '@/hooks/useSound';
 
 type InvitesListProps = {
   invites: FriendRequest[];
@@ -12,6 +13,7 @@ type InvitesListProps = {
 };
 
 export default function InvitesList({ invites, onAccept, onReject }: InvitesListProps) {
+  const { playClick } = useSound();
   if (invites.length === 0) {
     return (
       <div>
@@ -50,13 +52,19 @@ export default function InvitesList({ invites, onAccept, onReject }: InvitesList
             </div>
             <div className="flex gap-2">
               <button
-                onClick={() => onAccept(i.id)}
+                onClick={() => {
+                  playClick();
+                  onAccept(i.id);
+                }}
                 className="h-8 px-3 rounded-lg bg-[#e2b714] text-black hover:bg-[#d4c013] transition-colors"
               >
                 Aceitar
               </button>
               <button
-                onClick={() => onReject(i.id)}
+                onClick={() => {
+                  playClick();
+                  onReject(i.id);
+                }}
                 className="h-8 px-3 rounded-lg bg-[#ca4754] text-white hover:bg-[#b83d49] transition-colors"
               >
                 Recusar

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { type Friend } from '@/services/FriendService';
 import { getInitials } from '@/utils/avatar';
 import { setCachedProfileForUser } from '@/utils/storage';
+import { useSound } from '@/hooks/useSound';
 
 type FriendsListProps = {
   friends: Friend[];
@@ -20,6 +21,7 @@ export default function FriendsList({
   loadingWpm,
   onChatClick,
 }: FriendsListProps) {
+  const { playClick } = useSound();
   if (loading) {
     return (
       <div>
@@ -120,6 +122,7 @@ export default function FriendsList({
               <Link
                 href={`/stats/${encodeURIComponent(f.id)}`}
                 onClick={() => {
+                  playClick();
                   setCachedProfileForUser(f.id, f.display_name, f.avatar_url);
                 }}
                 className="flex-1 px-3 py-2 rounded-lg bg-[#2b2d2f] text-white hover:bg-[#3a3c3f] transition-colors text-sm text-center border border-[#3a3c3f]"
@@ -127,7 +130,10 @@ export default function FriendsList({
                 Ver Stats
               </Link>
               <button
-                onClick={() => onChatClick(f)}
+                onClick={() => {
+                  playClick();
+                  onChatClick(f);
+                }}
                 className="flex-1 px-3 py-2 rounded-lg bg-[#e2b714] text-black hover:bg-[#d4c013] transition-colors text-sm font-medium"
                 aria-label={`Abrir chat com ${f.display_name ?? 'Usuário'}`}
               >

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import '../styles/globals.css';
 import { AuthProvider } from '@/context/AuthContext';
+import { GameConfigProvider } from '@/context/GameConfigContext';
 import Header from '@/components/layout/Header';
 import ScrollRestorer from '@/components/layout/ScrollRestorer';
 
@@ -37,9 +38,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <AuthProvider>
-          <ScrollRestorer />
-          <Header />
-          {children}
+          <GameConfigProvider>
+            <ScrollRestorer />
+            <Header />
+            {children}
+          </GameConfigProvider>
         </AuthProvider>
       </body>
     </html>

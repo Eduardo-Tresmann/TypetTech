@@ -3,6 +3,9 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { generateText, getLines } from '@/utils/typingUtils';
 import { saveTypingResult, getUserPersonalBest } from '@/lib/db';
 import { getSupabase } from '@/lib/supabaseClient';
+import { SoundService } from '@/core/services/SoundService';
+import { useGameConfig } from '@/hooks/useGameConfig';
+import { GameConfig } from '@/core/types';
 
 export const useTypingTest = (): {
   timeLeft: number;
@@ -44,6 +47,39 @@ export const useTypingTest = (): {
     type: 'overall' | 'duration' | null;
     previousRecord: number | null;
   } | null>(null);
+  const [lastTypedIndex, setLastTypedIndex] = useState<number>(-1);
+  const [lastTypedCorrect, setLastTypedCorrect] = useState<boolean>(false);
+  
+  // Configuração de jogo e serviço de som
+  const { config } = useGameConfig();
+  const soundServiceRef = useRef<SoundService | null>(null);
+
+  // Inicializar e atualizar SoundService quando configurações de digitação mudarem
+  useEffect(() => {
+    if (!soundServiceRef.current) {
+      soundServiceRef.current = new SoundService(config.typingSoundEnabled, config.typingVolume);
+    } else {
+      soundServiceRef.current.setEnabled(config.typingSoundEnabled);
+      soundServiceRef.current.setVolume(config.typingVolume);
+    }
+  }, [config.typingSoundEnabled, config.typingVolume]);
+
+  // Ouvir evento de atualização de configuração para atualização imediata
+  useEffect(() => {
+    const handleConfigUpdate = (e: Event) => {
+      const customEvent = e as CustomEvent<GameConfig>;
+      const updatedConfig = customEvent.detail;
+      if (soundServiceRef.current && updatedConfig) {
+        soundServiceRef.current.setEnabled(updatedConfig.typingSoundEnabled);
+        soundServiceRef.current.setVolume(updatedConfig.typingVolume);
+      }
+    };
+
+    window.addEventListener('typetech:configUpdated', handleConfigUpdate);
+    return () => {
+      window.removeEventListener('typetech:configUpdated', handleConfigUpdate);
+    };
+  }, []);
 
   useEffect(() => {
     setText(generateText(350));
@@ -294,12 +330,34 @@ export const useTypingTest = (): {
       if (e.key === 'Backspace') {
         setUserInput(prev => prev.slice(0, -1));
         setCurrentIndex(prev => Math.max(0, prev - 1));
+        setLastTypedIndex(-1); // Limpa animação ao apagar
       } else if (e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) {
+        const newIndex = currentIndex;
+        const isCorrect = e.key === text[newIndex];
+        
+        // Tocar som de feedback
+        if (soundServiceRef.current) {
+          if (isCorrect) {
+            soundServiceRef.current.playCorrect();
+          } else {
+            soundServiceRef.current.playIncorrect();
+          }
+        }
+        
+        // Atualizar estado para animação visual
+        setLastTypedIndex(newIndex);
+        setLastTypedCorrect(isCorrect);
+        
+        // Remover classe de animação após a animação terminar
+        setTimeout(() => {
+          setLastTypedIndex(-1);
+        }, 300);
+        
         setUserInput(prev => prev + e.key);
         setCurrentIndex(prev => prev + 1);
       }
     },
-    [isActive, isFinished, isWindowFocused]
+    [isActive, isFinished, isWindowFocused, currentIndex, text]
   );
 
   useEffect(() => {
@@ -321,6 +379,8 @@ export const useTypingTest = (): {
     setIsNewRecord(false);
     setRecordInfo(null);
     setTimeLeft(totalTime);
+    setLastTypedIndex(-1);
+    setLastTypedCorrect(false);
     
     // Gera novo texto após limpar estados
     const newText = generateText(350);
@@ -407,14 +467,22 @@ export const useTypingTest = (): {
             const wordElements = word.split('').map((char, charIdx) => {
               const globalIndex = wordStartIndex + charIdx;
               let className = 'text-[#646669]';
+              let animationClass = '';
+              
               if (globalIndex < userInput.length) {
-                className =
-                  userInput[globalIndex] === char ? 'text-white' : 'text-[#ca4754] bg-[#ca47541a]';
+                const isCorrect = userInput[globalIndex] === char;
+                className = isCorrect ? 'text-white' : 'text-[#ca4754] bg-[#ca47541a]';
+                
+                // Aplicar animação no último caractere digitado
+                if (globalIndex === lastTypedIndex) {
+                  animationClass = lastTypedCorrect ? 'typing-correct' : 'typing-incorrect';
+                }
               } else if (globalIndex === currentIndex && cursorVisible) {
                 className = 'text-[#646669] border-l-2 border-[#e2b714]';
               }
+              
               return (
-                <span key={globalIndex} className={className}>
+                <span key={globalIndex} className={`${className} ${animationClass}`}>
                   {char}
                 </span>
               );

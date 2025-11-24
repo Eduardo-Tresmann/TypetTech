@@ -4,6 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { fetchUserResults, fetchUserResultsFiltered } from '@/lib/db';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import Link from 'next/link';
+import { useSound } from '@/hooks/useSound';
 
 type Result = {
   id: string;
@@ -18,6 +19,7 @@ type Result = {
 
 export default function StatsPage() {
   const { user } = useAuth();
+  const { playClick } = useSound();
   const [resultsAll, setResultsAll] = useState<Result[]>([]);
   const [resultsFiltered, setResultsFiltered] = useState<Result[]>([]);
   const [loading, setLoading] = useState(false);
@@ -94,7 +96,7 @@ export default function StatsPage() {
         <div className="space-y-6 sm:space-y-8">
           <div className="flex items-center justify-between mb-4 sm:mb-6">
             <h2 className="text-lg sm:text-xl font-semibold">Estatísticas</h2>
-            <Link href="/home" className="text-[#e2b714] text-sm sm:text-base">
+            <Link href="/home" className="text-[#e2b714] text-sm sm:text-base" onClick={playClick}>
               Voltar
             </Link>
           </div>
@@ -150,6 +152,7 @@ export default function StatsPage() {
                     <button
                       key={t}
                       onClick={() => {
+                        playClick();
                         setPage(0);
                         setDurations(prev => (active ? prev.filter(x => x !== t) : [...prev, t]));
                       }}
@@ -176,6 +179,7 @@ export default function StatsPage() {
                 >
                 <button
                   onClick={() => {
+                    playClick();
                     setPage(0);
                     setSortBy(prev => (prev === 'created_at' ? prev : 'created_at'));
                     setOrder(prev =>
@@ -191,6 +195,7 @@ export default function StatsPage() {
                 </button>
                 <button
                   onClick={() => {
+                    playClick();
                     setPage(0);
                     setSortBy(prev => (prev === 'total_time' ? prev : 'total_time'));
                     setOrder(prev =>
@@ -206,6 +211,7 @@ export default function StatsPage() {
                 </button>
                 <button
                   onClick={() => {
+                    playClick();
                     setPage(0);
                     setSortBy(prev => (prev === 'wpm' ? prev : 'wpm'));
                     setOrder(prev =>
@@ -221,6 +227,7 @@ export default function StatsPage() {
                 </button>
                 <button
                   onClick={() => {
+                    playClick();
                     setPage(0);
                     setSortBy(prev => (prev === 'accuracy' ? prev : 'accuracy'));
                     setOrder(prev =>

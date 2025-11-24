@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { getInitials, truncateDisplayName } from '@/utils/avatar';
 import { setCachedProfileForUser } from '@/utils/storage';
+import { useSound } from '@/hooks/useSound';
 
 type Message = {
   id: number;
@@ -105,6 +106,7 @@ export default function ChatWindow({
   onClose,
   isOpen,
 }: ChatWindowProps) {
+  const { playClick, playMenuToggle } = useSound();
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -502,7 +504,10 @@ export default function ChatWindow({
       {/* Overlay para mobile */}
       <div
         className="fixed inset-0 bg-black/50 z-40 md:hidden transition-opacity"
-        onClick={onClose}
+        onClick={() => {
+          playClick();
+          onClose();
+        }}
         aria-hidden="true"
       />
 
@@ -563,6 +568,7 @@ export default function ChatWindow({
                   <Link
                     href={`/stats/${encodeURIComponent(friend.id)}`}
                     onClick={() => {
+                      playClick();
                       setMenuOpen(false);
                       setCachedProfileForUser(friend.id, friend.display_name, friend.avatar_url);
                     }}
@@ -589,7 +595,10 @@ export default function ChatWindow({
             )}
           </div>
           <button
-            onClick={onClose}
+            onClick={() => {
+              playClick();
+              onClose();
+            }}
             className="ml-2 p-2 rounded-lg hover:bg-[#3a3c3f] transition-colors text-[#d1d1d1] hover:text-white"
             aria-label="Fechar chat"
           >
@@ -734,7 +743,10 @@ export default function ChatWindow({
               }}
             />
             <button
-              onClick={onSendMessage}
+              onClick={() => {
+                playClick();
+                onSendMessage();
+              }}
               disabled={!messageText.trim()}
               className="p-3 rounded-lg bg-[#e2b714] text-black hover:bg-[#d4c013] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0 shadow-lg hover:shadow-xl disabled:shadow-none"
               aria-label="Enviar mensagem"

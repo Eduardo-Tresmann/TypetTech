@@ -10,7 +10,11 @@ export interface GameConfig {
   difficulty: Difficulty;
   duration: number;
   theme: Theme;
-  soundEnabled: boolean;
+  soundEnabled: boolean; // Mantido para compatibilidade
+  typingSoundEnabled: boolean;
+  interfaceSoundEnabled: boolean;
+  typingVolume: number; // 0.0 a 1.0
+  interfaceVolume: number; // 0.0 a 1.0
 }
 
 export interface TypingStats {

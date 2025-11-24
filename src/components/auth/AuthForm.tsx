@@ -6,12 +6,14 @@ import { translateError } from '@/lib/errorMessages';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { isValidEmail, normalizeEmail as normalizeEmailUtil } from '@/utils/validation';
 import { rateLimiters } from '@/utils/security';
+import { useSound } from '@/hooks/useSound';
 
 type Props = {
   mode: 'login' | 'register';
 };
 
 const AuthForm: React.FC<Props> = ({ mode }) => {
+  const { playClick } = useSound();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -138,7 +140,10 @@ const AuthForm: React.FC<Props> = ({ mode }) => {
               <button
                 type="button"
                 aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
-                onClick={() => setShowPassword(v => !v)}
+                onClick={() => {
+                  playClick();
+                  setShowPassword(v => !v);
+                }}
                 tabIndex={-1}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-[#d1d1d1] hover:text-white transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
               >
@@ -202,7 +207,10 @@ const AuthForm: React.FC<Props> = ({ mode }) => {
                 <button
                   type="button"
                   aria-label={showConfirm ? 'Ocultar confirmação' : 'Mostrar confirmação'}
-                  onClick={() => setShowConfirm(v => !v)}
+                  onClick={() => {
+                    playClick();
+                    setShowConfirm(v => !v);
+                  }}
                   tabIndex={-1}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-[#d1d1d1] hover:text-white transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
                 >
@@ -286,6 +294,7 @@ const AuthForm: React.FC<Props> = ({ mode }) => {
 
           <button
             type="submit"
+            onClick={playClick}
             disabled={loading}
             className="w-full py-3.5 sm:py-3 px-6 bg-[#e2b714] text-black rounded-lg hover:bg-[#d4c013] transition-all flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed font-semibold shadow-lg hover:shadow-xl disabled:shadow-none text-base sm:text-sm min-h-[44px]"
           >
